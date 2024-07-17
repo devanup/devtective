@@ -108,7 +108,7 @@ export function Header() {
 					<Input
 						id='search'
 						placeholder='Search User'
-						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md`}
+						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase`}
 						onFocus={handleInputFocus}
 						onBlur={handleInputBlur}
 						ref={inputRef}
