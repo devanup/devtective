@@ -96,7 +96,7 @@ export function Header() {
 			{/* Search Input */}
 			<div className='flex justify-center relative'>
 				<form
-					className={`flex items-center justify-between bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static ${
+					className={`items-center justify-between bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static  ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
@@ -113,7 +113,6 @@ export function Header() {
 						onBlur={handleInputBlur}
 						ref={inputRef}
 					/>
-					{/* hide when a character is typed */}
 					<span
 						className={`flex absolute right-3  flex-row items-center text-muted-foreground ${
 							isInputFocused ? 'hidden' : ''
