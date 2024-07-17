@@ -38,6 +38,7 @@ export function Header() {
 		const handleResize = () => {
 			if (window.innerWidth >= 768) {
 				setIsSearchVisible(false);
+				document.body.classList.remove('overflow-hidden');
 			}
 		};
 
@@ -58,6 +59,14 @@ export function Header() {
 			window.removeEventListener('keydown', handleKeyDown);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (isSearchVisible) {
+			document.body.classList.add('overflow-hidden');
+		} else {
+			document.body.classList.remove('overflow-hidden');
+		}
+	}, [isSearchVisible]);
 
 	return (
 		<header className='flex items-center justify-between mb-10 pt-8 w-full bg-gradient-to-b from-white to-transparent'>
