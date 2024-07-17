@@ -28,6 +28,17 @@ const config = {
 			},
 		},
 		extend: {
+			backdropFilter: {
+				'blur-100': 'blur(100px)',
+				'blur-md': 'blur(3px)',
+			},
+			backgroundColor: {
+				'custom-rgba': 'rgba(2, 43, 70, 0.5)',
+			},
+			backgroundImage: {
+				'custom-radial':
+					'radial-gradient(circle at -20% 90%, rgba(255, 255, 255, 0.3), rgba(123, 123, 123, 0.04))',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -111,6 +122,23 @@ const config = {
 					type: 'color',
 				},
 			);
+		},
+		function ({ addUtilities }: any) {
+			addUtilities({
+				'.backdrop-blur-100': {
+					backdropFilter: 'blur(100px)',
+				},
+				'.backdrop-blur-md': {
+					backdropFilter: 'blur(3px)',
+				},
+				'.bg-custom-rgba': {
+					backgroundColor: 'rgba(2, 43, 70, 0.5)',
+				},
+				'.bg-custom-radial': {
+					backgroundImage:
+						'radial-gradient(circle at -20% 90%, rgba(255, 255, 255, 0.3), rgba(123, 123, 123, 0.04))',
+				},
+			});
 		},
 	],
 } satisfies Config;

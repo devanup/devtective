@@ -6,9 +6,9 @@ import GridBackGround from './ui/components/common/GridBackGround';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-	title: 'devTective',
+	title: 'Devtective',
 	description:
-		'devTective app utilizes the GitHub API to fetch and display user data. The app offers a sleek and minimal interface to explore GitHub profiles, repositories, and activities. Discover, track, and analyze GitHub users with ease and precision.',
+		'Devtective app utilizes the GitHub API to fetch and display user data. The app offers a sleek and minimal interface to explore GitHub profiles, repositories, and activities. Discover, track, and analyze GitHub users with ease and precision.',
 };
 
 export default function RootLayout({

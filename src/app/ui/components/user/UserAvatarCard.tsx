@@ -18,7 +18,7 @@ export function UserAvatarCard() {
 				<h1 className={`text-2xl font-bold`}>Anup Thapa</h1>
 				<LinkPreview
 					url='https://github.com/devanup'
-					className={`text-xl text-muted-foreground w-fit ${jetBrainsMono.className}`}
+					className={`text-xl text-muted-foreground w-fit ${jetBrainsMono.className} hover:text-gray-600 transition-colors duration-300 ease-in-out`}
 				>
 					@devanup
 				</LinkPreview>
