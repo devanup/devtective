@@ -12,24 +12,32 @@ const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 
 export function ProfileStatCard() {
 	return (
-		<Card className='flex flex-row items-center justify-evenly lg:justify-between bg-gray-100 rounded-xl'>
-			<div>
-				<CardHeader className='-mb-4 text-center'>
-					<CardTitle className={`tracking-wider`}>8.3k</CardTitle>
+		<Card className='flex md:flex-row flex-col items-center justify-evenly bg-gray-100 rounded-xl'>
+			<div className='-mb-6 md:mb-0'>
+				<CardHeader className='-mb-4 text-center '>
+					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+						8.3k
+					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription className={`text-lg ${workSans.className}`}>
+					<CardDescription
+						className={`md:text-lg text-md ${workSans.className}`}
+					>
 						Followers
 					</CardDescription>
 				</CardContent>
 			</div>
 			<div className='w-[2px] h-[70%] bg-slate-200' />
-			<div>
+			<div className='-mb-6 md:mb-0'>
 				<CardHeader className='-mb-4 text-center'>
-					<CardTitle className={`tracking-wider`}>0</CardTitle>
+					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+						0
+					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription className={`text-lg ${workSans.className}`}>
+					<CardDescription
+						className={`md:text-lg text-md ${workSans.className}`}
+					>
 						Following
 					</CardDescription>
 				</CardContent>
@@ -37,10 +45,14 @@ export function ProfileStatCard() {
 			<div className='w-[2px] h-[70%] bg-slate-200' />
 			<div>
 				<CardHeader className='-mb-4 text-center'>
-					<CardTitle className={`tracking-wider`}>2.7k</CardTitle>
+					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+						2.7k
+					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<CardDescription className={`text-lg ${workSans.className}`}>
+					<CardDescription
+						className={`md:text-lg text-md ${workSans.className}`}
+					>
 						Contributions
 					</CardDescription>
 				</CardContent>

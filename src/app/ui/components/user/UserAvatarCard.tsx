@@ -7,7 +7,7 @@ export function UserAvatarCard() {
 	return (
 		<div className='flex items-center space-x-6'>
 			<div
-				className='w-[170px] h-[170px] bg-white bg-opacity-50 rounded-xl'
+				className='w-[110px] h-[110px] md:w-[170px] md:h-[170px] bg-white bg-opacity-50 rounded-xl'
 				style={{
 					backgroundImage: "url('/images/devanup-avatar.png')",
 					backgroundSize: 'cover',

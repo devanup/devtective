@@ -64,10 +64,11 @@ export function Header() {
 			{/* bg-overlay for small screen */}
 			{isSearchVisible && (
 				<div
-					className='absolute md:hidden w-full h-screen inset-0 bg-white/60 rounded-none z-10 backdrop-blur-md'
+					className='absolute md:hidden w-full h-screen inset-0 bg-gradient-to-b from-white to-transparent rounded-none z-10 backdrop-blur-md'
 					onClick={hideSearch}
 				/>
 			)}
+			{/* Logo */}
 			<Link href='' className='flex items-center space-x-3 relative'>
 				<div
 					className='w-[55px] h-[55px]'
@@ -83,15 +84,14 @@ export function Header() {
 					<span className='text-accent-foreground/70'>tective</span>
 				</span>
 			</Link>
+			{/* Search Input */}
 			<div className='flex justify-center relative'>
 				<form
-					className={`flex items-center justify-between bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static ${
+					className={`flex items-center justify-between  bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
 					}`}
-
-					// className={`md:flex hidden items-center relative justify-between bg-white bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl ${workSans.className}`}
 				>
 					<Label htmlFor='search' className=''>
 						<Search size={18} />
