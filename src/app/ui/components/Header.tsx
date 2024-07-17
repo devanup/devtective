@@ -22,8 +22,9 @@ export function Header() {
 						backgroundRepeat: 'no-repeat',
 					}}
 				/>
-				<span className={`text-xl absolute left-14 ${jetBrainsMono.className}`}>
-					Devtective
+				<span className={`text-lg absolute left-14 ${jetBrainsMono.className}`}>
+					Dev
+					<span className='text-accent-foreground/70'>tective</span>
 				</span>
 			</Link>
 			<div className='flex justify-center relative'>
@@ -40,7 +41,7 @@ export function Header() {
 					/>
 					{/* hide when a character is typed */}
 					<span className='absolute right-3 flex flex-row items-center text-muted-foreground'>
-						<CommandIcon size={12} />K
+						<CommandIcon size={12} /> K
 					</span>
 				</form>
 			</div>

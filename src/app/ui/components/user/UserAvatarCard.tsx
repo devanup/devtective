@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import { DM_Mono, JetBrains_Mono } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
+import { LinkPreview } from '@/components/ui/link-preview';
 
-const dmMono = DM_Mono({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
 export function UserAvatarCard() {
@@ -17,12 +16,12 @@ export function UserAvatarCard() {
 			/>
 			<div className=' flex flex-col space-y-2'>
 				<h1 className={`text-2xl font-bold`}>Anup Thapa</h1>
-				<Link
-					href=''
+				<LinkPreview
+					url='https://github.com/devanup'
 					className={`text-xl text-muted-foreground w-fit ${jetBrainsMono.className}`}
 				>
 					@devanup
-				</Link>
+				</LinkPreview>
 			</div>
 		</div>
 	);
