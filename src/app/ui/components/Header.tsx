@@ -4,21 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CommandIcon, Moon, Search, Sun } from 'lucide-react';
 import Link from 'next/link';
-import z from 'zod';
 import { useState, useEffect, useRef, FormEvent } from 'react';
 
 import { Work_Sans, JetBrains_Mono } from 'next/font/google';
 import { Label } from '@/components/ui/label';
 import { getUserData } from '@/app/actions/userData';
+import { getContributionData } from '@/app/actions/contributionData'; // Import the function
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
-const userSchema = z
-	.string()
-	.min(1, { message: 'Must be 1 or more characters long' });
-
-export function Header({ setUserData }: { setUserData: (data: any) => void }) {
+export function Header({
+	setUserData,
+	setContributionData, // Add this prop to pass contribution data
+}: {
+	setUserData: (data: any) => void;
+	setContributionData: (data: any) => void; // Add this prop type
+}) {
 	// Inside the Header component
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [isInputFocused, setIsInputFocused] = useState(false);
@@ -29,8 +31,13 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 		const formData = new FormData(e.target as HTMLFormElement);
 		const username = formData.get('search') as string;
 
-		const userData = await getUserData(username);
+		const [userData, contributionData] = await Promise.all([
+			getUserData(username),
+			getContributionData(username),
+		]);
+
 		setUserData(userData);
+		setContributionData(contributionData);
 	};
 
 	const handleInputFocus = () => {
