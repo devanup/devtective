@@ -1,22 +1,37 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CommandIcon, Moon, Search, Sun } from 'lucide-react';
 import Link from 'next/link';
+import z from 'zod';
+import { useState, useEffect, useRef, FormEvent } from 'react';
 
 import { Work_Sans, JetBrains_Mono } from 'next/font/google';
 import { Label } from '@/components/ui/label';
+import { getUserData } from '@/app/actions/userData';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
-export function Header() {
+const userSchema = z
+	.string()
+	.min(1, { message: 'Must be 1 or more characters long' });
+
+export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 	// Inside the Header component
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [isInputFocused, setIsInputFocused] = useState(false);
 	const inputRef = useRef(null);
+
+	const handleSubmit = async (e: FormEvent) => {
+		e.preventDefault();
+		const formData = new FormData(e.target as HTMLFormElement);
+		const username = formData.get('search') as string;
+
+		const userData = await getUserData(username);
+		setUserData(userData);
+	};
 
 	const handleInputFocus = () => {
 		setIsInputFocused(true);
@@ -96,6 +111,7 @@ export function Header() {
 			{/* Search Input */}
 			<div className='flex justify-center relative'>
 				<form
+					onSubmit={handleSubmit}
 					className={`items-center justify-between bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static  ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
@@ -107,6 +123,7 @@ export function Header() {
 					</Label>
 					<Input
 						id='search'
+						name='search'
 						placeholder='Search User'
 						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase`}
 						onFocus={handleInputFocus}
