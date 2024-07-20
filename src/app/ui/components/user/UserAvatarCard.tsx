@@ -25,7 +25,6 @@ export function UserAvatarCard({ userData }: { userData: any }) {
 				<h1
 					className={`text-3xl font-bold ${gabarito.className} line-clamp-1 capitalize`}
 				>
-					{/* Lee Robinson */}
 					{userData ? userData.name : 'NA'}
 				</h1>
 				<LinkPreview

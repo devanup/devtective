@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CommandIcon, Moon, Search, Sun } from 'lucide-react';
 import Link from 'next/link';
-import z from 'zod';
 import { useState, useEffect, useRef, FormEvent } from 'react';
 
 import { Work_Sans, JetBrains_Mono } from 'next/font/google';
@@ -14,15 +13,11 @@ import { getUserData } from '@/app/actions/userData';
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
-const userSchema = z
-	.string()
-	.min(1, { message: 'Must be 1 or more characters long' });
-
 export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 	// Inside the Header component
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [isInputFocused, setIsInputFocused] = useState(false);
-	const inputRef = useRef(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
@@ -53,7 +48,7 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 		const handleResize = () => {
 			if (window.innerWidth >= 768) {
 				setIsSearchVisible(false);
-				document.body.classList.remove('overflow-hidden');
+				document.body.classList.remove('no-scroll');
 			}
 		};
 
@@ -61,7 +56,9 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 			if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
 				event.preventDefault();
 				setIsSearchVisible(true);
-				(inputRef.current as HTMLInputElement | null)?.focus();
+				setTimeout(() => {
+					inputRef.current?.focus();
+				}, 0);
 			}
 		};
 
@@ -77,9 +74,9 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 
 	useEffect(() => {
 		if (isSearchVisible) {
-			document.body.classList.add('overflow-hidden');
+			document.body.classList.add('no-scroll');
 		} else {
-			document.body.classList.remove('overflow-hidden');
+			document.body.classList.remove('no-scroll');
 		}
 	}, [isSearchVisible]);
 

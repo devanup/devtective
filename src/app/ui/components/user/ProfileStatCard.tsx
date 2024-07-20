@@ -8,17 +8,18 @@ import {
 
 import { Work_Sans } from 'next/font/google';
 
+import { abbreviateNumber } from 'js-abbreviation-number';
+
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 
 export function ProfileStatCard({ userData }: { userData: any }) {
-	// console.log('userData from ProfileStatCard: ', userData);
 	return (
 		<Card className='flex md:flex-row flex-col items-center justify-evenly bg-gray-100 rounded-xl'>
 			<div className='-mb-6 md:mb-0'>
 				<CardHeader className='-mb-4 text-center '>
-					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 8.3k */}
-						{userData ? userData.followers : 'NA'}
+						{userData ? abbreviateNumber(userData.followers) : 'NA'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
@@ -32,9 +33,9 @@ export function ProfileStatCard({ userData }: { userData: any }) {
 			<div className='w-[2px] h-[70%] bg-slate-200' />
 			<div className='-mb-6 md:mb-0'>
 				<CardHeader className='-mb-4 text-center'>
-					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 0 */}
-						{userData ? userData.following : 'NA'}
+						{userData ? abbreviateNumber(userData.following) : 'NA'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
@@ -49,14 +50,14 @@ export function ProfileStatCard({ userData }: { userData: any }) {
 			<div>
 				<CardHeader className='-mb-4 text-center'>
 					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
-						2.7k
+						{userData ? abbreviateNumber(userData.public_repos) : 'NA'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<CardDescription
 						className={`md:text-lg text-md ${workSans.className}`}
 					>
-						Contributions
+						Repositories
 					</CardDescription>
 				</CardContent>
 			</div>
