@@ -9,35 +9,23 @@ import { useState, useEffect, useRef, FormEvent } from 'react';
 import { Work_Sans, JetBrains_Mono } from 'next/font/google';
 import { Label } from '@/components/ui/label';
 import { getUserData } from '@/app/actions/userData';
-import { getContributionData } from '@/app/actions/contributionData'; // Import the function
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
-export function Header({
-	setUserData,
-	setContributionData, // Add this prop to pass contribution data
-}: {
-	setUserData: (data: any) => void;
-	setContributionData: (data: any) => void; // Add this prop type
-}) {
+export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 	// Inside the Header component
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [isInputFocused, setIsInputFocused] = useState(false);
-	const inputRef = useRef(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
 		const username = formData.get('search') as string;
 
-		const [userData, contributionData] = await Promise.all([
-			getUserData(username),
-			getContributionData(username),
-		]);
-
+		const userData = await getUserData(username);
 		setUserData(userData);
-		setContributionData(contributionData);
 	};
 
 	const handleInputFocus = () => {
@@ -60,7 +48,7 @@ export function Header({
 		const handleResize = () => {
 			if (window.innerWidth >= 768) {
 				setIsSearchVisible(false);
-				document.body.classList.remove('overflow-hidden');
+				document.body.classList.remove('no-scroll');
 			}
 		};
 
@@ -68,7 +56,9 @@ export function Header({
 			if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
 				event.preventDefault();
 				setIsSearchVisible(true);
-				(inputRef.current as HTMLInputElement | null)?.focus();
+				setTimeout(() => {
+					inputRef.current?.focus();
+				}, 0);
 			}
 		};
 
@@ -84,9 +74,9 @@ export function Header({
 
 	useEffect(() => {
 		if (isSearchVisible) {
-			document.body.classList.add('overflow-hidden');
+			document.body.classList.add('no-scroll');
 		} else {
-			document.body.classList.remove('overflow-hidden');
+			document.body.classList.remove('no-scroll');
 		}
 	}, [isSearchVisible]);
 

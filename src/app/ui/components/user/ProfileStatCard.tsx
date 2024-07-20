@@ -12,27 +12,12 @@ import { abbreviateNumber } from 'js-abbreviation-number';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 
-interface UserDetailsCardProps {
-	userData: any;
-	contributionData: { [key: string]: number | null };
-}
-
-export function ProfileStatCard({
-	userData,
-	contributionData,
-}: UserDetailsCardProps) {
-	// Sum all contributions from the "total" object
-	const totalContributions = contributionData
-		? Object.values(contributionData).reduce(
-				(sum, count) => (sum as number) + (count as number),
-				0,
-		  )
-		: 'NA';
+export function ProfileStatCard({ userData }: { userData: any }) {
 	return (
 		<Card className='flex md:flex-row flex-col items-center justify-evenly bg-gray-100 rounded-xl'>
 			<div className='-mb-6 md:mb-0'>
 				<CardHeader className='-mb-4 text-center '>
-					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 8.3k */}
 						{userData ? abbreviateNumber(userData.followers) : 'NA'}
 					</CardTitle>
@@ -48,7 +33,7 @@ export function ProfileStatCard({
 			<div className='w-[2px] h-[70%] bg-slate-200' />
 			<div className='-mb-6 md:mb-0'>
 				<CardHeader className='-mb-4 text-center'>
-					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
+					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 0 */}
 						{userData ? abbreviateNumber(userData.following) : 'NA'}
 					</CardTitle>
@@ -65,17 +50,14 @@ export function ProfileStatCard({
 			<div>
 				<CardHeader className='-mb-4 text-center'>
 					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
-						{/* {abbreviateNumber(totalContributions)} */}
-						{typeof totalContributions === 'number'
-							? abbreviateNumber(totalContributions)
-							: 'NA'}
+						{userData ? abbreviateNumber(userData.public_repos) : 'NA'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<CardDescription
 						className={`md:text-lg text-md ${workSans.className}`}
 					>
-						Contributions
+						Repositories
 					</CardDescription>
 				</CardContent>
 			</div>
