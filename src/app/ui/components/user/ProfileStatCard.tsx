@@ -19,7 +19,7 @@ export function ProfileStatCard({ userData }: { userData: any }) {
 				<CardHeader className='-mb-4 text-center '>
 					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 8.3k */}
-						{userData ? abbreviateNumber(userData.followers) : 'NA'}
+						{userData ? abbreviateNumber(userData.followers) : '-'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
@@ -35,7 +35,7 @@ export function ProfileStatCard({ userData }: { userData: any }) {
 				<CardHeader className='-mb-4 text-center'>
 					<CardTitle className={`tracking-wider md:text-xl text-lg uppercase`}>
 						{/* 0 */}
-						{userData ? abbreviateNumber(userData.following) : 'NA'}
+						{userData ? abbreviateNumber(userData.following) : '-'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
@@ -50,7 +50,7 @@ export function ProfileStatCard({ userData }: { userData: any }) {
 			<div>
 				<CardHeader className='-mb-4 text-center'>
 					<CardTitle className={`tracking-wider md:text-xl text-lg`}>
-						{userData ? abbreviateNumber(userData.public_repos) : 'NA'}
+						{userData ? abbreviateNumber(userData.public_repos) : '-'}
 					</CardTitle>
 				</CardHeader>
 				<CardContent>

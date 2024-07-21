@@ -9,23 +9,57 @@ import { useState, useEffect, useRef, FormEvent } from 'react';
 import { Work_Sans, JetBrains_Mono } from 'next/font/google';
 import { Label } from '@/components/ui/label';
 import { getUserData } from '@/app/actions/userData';
+import * as z from 'zod';
+import { useToast } from '@/components/ui/use-toast';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
+
+const searchSchema = z.string().min(1, { message: 'Enter a valid username' });
 
 export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 	// Inside the Header component
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 	const [isInputFocused, setIsInputFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const { toast } = useToast();
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
 		const username = formData.get('search') as string;
 
-		const userData = await getUserData(username);
-		setUserData(userData);
+		console.log('Form submitted with username:', username);
+
+		const validation = searchSchema.safeParse(username);
+		if (!validation.success) {
+			toast({
+				variant: 'destructive',
+				title: 'Username cannot be empty',
+				description: validation.error.errors[0].message,
+			});
+			return;
+		}
+
+		try {
+			const userData = await getUserData(username);
+
+			if (userData === undefined) {
+				toast({
+					variant: 'destructive',
+					title: 'User not found',
+					description: 'Please enter a valid username',
+				});
+				return;
+			}
+
+			setUserData(userData);
+
+			// Hide search overlay after successful search
+			hideSearch();
+		} catch (error) {
+			alert('An error occurred while fetching the user data');
+		}
 	};
 
 	const handleInputFocus = () => {
@@ -52,23 +86,23 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 			}
 		};
 
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-				event.preventDefault();
-				setIsSearchVisible(true);
-				setTimeout(() => {
-					inputRef.current?.focus();
-				}, 0);
-			}
-		};
+		// const handleKeyDown = (event: KeyboardEvent) => {
+		// 	if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+		// 		event.preventDefault();
+		// 		setIsSearchVisible(true);
+		// 		setTimeout(() => {
+		// 			inputRef.current?.focus();
+		// 		}, 0);
+		// 	}
+		// };
 
 		window.addEventListener('resize', handleResize);
-		window.addEventListener('keydown', handleKeyDown);
+		// window.addEventListener('keydown', handleKeyDown);
 
 		// Cleanup event listener on component unmount
 		return () => {
 			window.removeEventListener('resize', handleResize);
-			window.removeEventListener('keydown', handleKeyDown);
+			// window.removeEventListener('keydown', handleKeyDown);
 		};
 	}, []);
 
@@ -127,13 +161,13 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 						onBlur={handleInputBlur}
 						ref={inputRef}
 					/>
-					<span
+					{/* <span
 						className={`flex absolute right-3  flex-row items-center text-muted-foreground ${
 							isInputFocused ? 'hidden' : ''
 						}`}
 					>
 						<CommandIcon size={12} /> K
-					</span>
+					</span> */}
 				</form>
 			</div>
 			<div className='flex items-center justify-center'>

@@ -35,48 +35,49 @@ export function UserDetailsCard({ userData }: { userData: any }) {
 						: 'Company not listed'}
 				</h3>
 			</div>
-			<Link
-				href={
-					userData?.twitter_username
-						? `https://twitter.com/${userData?.twitter_username}`
-						: ''
-				}
-				target='_blank'
-				className={`${
-					!userData?.twitter_username
-						? 'text-muted-foreground cursor-default'
-						: ''
-				}  w-fit`}
-			>
-				<div className='flex w-full items-center space-x-3'>
-					<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
-						<FaXTwitter className='w-5 h-5 mx-auto text-white ' />
+			{userData?.twitter_username ? (
+				<Link
+					href={`https://twitter.com/${userData?.twitter_username}`}
+					target='_blank'
+					className='w-fit'
+				>
+					<div className='flex w-full items-center space-x-3'>
+						<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
+							<FaXTwitter className='w-5 h-5 mx-auto text-white ' />
+						</div>
+						<h3>{userData?.twitter_username}</h3>
 					</div>
-					<h3>{userData?.twitter_username ?? 'Username not listed'}</h3>
-				</div>
-			</Link>
-			<Link
-				href={
-					userData?.blog
-						? userData?.blog
-						: 'https://www.google.com/search?q=how+to+make+a+website'
-				}
-				target='_blank'
-				className={`${
-					!userData?.blog ? 'text-muted-foreground cursor-default' : ''
-				}  w-fit`}
-			>
-				<div className='flex w-full items-center space-x-3'>
-					<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
-						<LuLink2 className='w-5 h-5 mx-auto text-white' />
+				</Link>
+			) : (
+				<div className='w-fit text-muted-foreground cursor-default'>
+					<div className='flex w-full items-center space-x-3'>
+						<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
+							<FaXTwitter className='w-5 h-5 mx-auto text-white ' />
+						</div>
+						<h3>Username not listed</h3>
 					</div>
-					<h3>
-						{userData?.blog && userData?.blog !== ''
-							? userData?.blog
-							: 'Website not listed'}
-					</h3>
 				</div>
-			</Link>
+			)}
+
+			{userData?.blog ? (
+				<Link href={userData?.blog} target='_blank' className='w-fit'>
+					<div className='flex w-full items-center space-x-3'>
+						<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
+							<LuLink2 className='w-5 h-5 mx-auto text-white' />
+						</div>
+						<h3>{userData?.blog}</h3>
+					</div>
+				</Link>
+			) : (
+				<div className='w-fit text-muted-foreground cursor-default'>
+					<div className='flex w-full items-center space-x-3'>
+						<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
+							<LuLink2 className='w-5 h-5 mx-auto text-white' />
+						</div>
+						<h3>Website not listed</h3>
+					</div>
+				</div>
+			)}
 		</Card>
 	);
 }

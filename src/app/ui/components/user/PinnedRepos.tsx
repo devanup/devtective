@@ -26,7 +26,9 @@ export function PinnedRepos({ userData }: { userData: any }) {
 		const fetchPinnedRepos = async () => {
 			try {
 				const data = await getPinnedRepos(userData.login);
-				console.log('pinnedRepos: ', data);
+				if (data === undefined) {
+					return;
+				}
 				setPinnedRepos(data);
 			} catch (error) {
 				console.error('Error fetching pinned repos:', error);

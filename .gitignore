@@ -37,3 +37,6 @@ next-env.d.ts
 
 # text files
 .txt
+
+# ignore the achive directory and the stuff inside it inside /src 
+/src/archive/*
