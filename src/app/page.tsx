@@ -20,7 +20,7 @@ export default function Home() {
 	return (
 		<main className='px-8 pb-8 max-w-[1800px] mx-auto antialiased'>
 			<Header setUserData={setUserData} />
-			<div className='flex lg:flex-row flex-col lg:space-x-8 space-x-0 lg:space-y-0 space-y-8'>
+			<div className='flex lg:flex-row flex-col lg:space-x-12 space-x-0 lg:space-y-0 space-y-8'>
 				<ProfileOverView userData={userData} />
 				<RepoOverview />
 			</div>
