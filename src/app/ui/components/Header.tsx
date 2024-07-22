@@ -143,7 +143,7 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 			<div className='flex justify-center relative'>
 				<form
 					onSubmit={handleSubmit}
-					className={`items-center justify-between bg-white md:bg-opacity-20 text-md pl-3 border-2 border-black/30 rounded-xl relative md:static  ${
+					className={`items-center justify-between md:bg-opacity-20 text-md pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
@@ -156,7 +156,7 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 						id='search'
 						name='search'
 						placeholder='Search User'
-						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase`}
+						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase placeholder:capitalize`}
 						onFocus={handleInputFocus}
 						onBlur={handleInputBlur}
 						ref={inputRef}
