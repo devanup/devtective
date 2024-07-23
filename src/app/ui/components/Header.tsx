@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { getUserData } from '@/app/actions/userData';
 import * as z from 'zod';
 import { useToast } from '@/components/ui/use-toast';
+import { BsFillMoonStarsFill } from 'react-icons/bs';
+import { IoMdSunny } from 'react-icons/io';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
@@ -143,7 +145,7 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 			<div className='flex justify-center relative'>
 				<form
 					onSubmit={handleSubmit}
-					className={`items-center justify-between md:bg-opacity-20 text-md pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
+					className={`items-center justify-between md:bg-opacity-20 text-md py-1 pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
@@ -156,18 +158,18 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 						id='search'
 						name='search'
 						placeholder='Search User'
-						className={`p-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase placeholder:capitalize`}
+						className={`py-0 px-3 rounded-tr-xl rounded-br-xl bg-transparent border-none focus:outline-none text-md lowercase placeholder:capitalize`}
 						onFocus={handleInputFocus}
 						onBlur={handleInputBlur}
 						ref={inputRef}
 					/>
-					{/* <span
-						className={`flex absolute right-3  flex-row items-center text-muted-foreground ${
+					<span
+						className={`flex absolute right-3 flex-row items-center text-muted-foreground ${
 							isInputFocused ? 'hidden' : ''
 						}`}
 					>
-						<CommandIcon size={12} /> K
-					</span> */}
+						<CommandIcon size={12} />K
+					</span>
 				</form>
 			</div>
 			<div className='flex items-center justify-center'>
@@ -180,8 +182,8 @@ export function Header({ setUserData }: { setUserData: (data: any) => void }) {
 					<Search size={24} />
 				</Button>
 				<Button variant={'link'} size={'icon'}>
-					<Moon size={24} />
-					{/* <Sun size={24} /> */}
+					<BsFillMoonStarsFill size={22} />
+					{/* <IoMdSunny size={24} /> */}
 				</Button>
 			</div>
 		</header>

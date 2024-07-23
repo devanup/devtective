@@ -63,7 +63,7 @@ export function PinnedRepos({ userData }: { userData: any }) {
 				className={`text-2xl text-center font-bold ${gabarito.className} text-slate-700 p-0`}
 			>
 				<span className='flex justify-center items-center space-x-2'>
-					<BsPinFill className='w-5 h-5' />
+					{/* <BsPinFill className='w-5 h-5' /> */}
 					<span>Pinned Repositories</span>
 				</span>
 			</CardHeader>
