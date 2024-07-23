@@ -21,6 +21,7 @@
 		"clsx": "^2.1.1",
 		"framer-motion": "^11.3.8",
 		"get-pinned-repos": "^1.1.0",
+		"gh-polyglot": "^2.3.3",
 		"js-abbreviation-number": "^1.4.0",
 		"lucide-react": "^0.408.0",
 		"mini-svg-data-uri": "^1.4.4",
