@@ -6,7 +6,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { PiMapPinFill } from 'react-icons/pi';
 import { ImBriefcase } from 'react-icons/im';
 import { LuLink2 } from 'react-icons/lu';
-
+import { BsCalendar } from 'react-icons/bs';
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 
 export function UserDetailsCard({ userData }: { userData: any }) {
@@ -14,6 +14,20 @@ export function UserDetailsCard({ userData }: { userData: any }) {
 		<Card
 			className={`flex flex-col space-y-4 bg-gray-100 rounded-xl p-6 ${workSans.className}`}
 		>
+			{/* Date joined */}
+			<div className='flex w-full items-center space-x-3'>
+				<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
+					<BsCalendar className='w-5 h-5 mx-auto text-white ' />
+				</div>
+				<h3 className={!userData?.created_at ? 'text-muted-foreground' : ''}>
+					{userData?.created_at
+						? `Joined ${new Date(userData.created_at).toLocaleString('en-US', {
+								month: 'short',
+								year: 'numeric',
+						  })}`
+						: 'Date unknown'}
+				</h3>
+			</div>
 			<div className='flex w-full items-center space-x-3'>
 				<div className='w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-100 bg-custom-rgba bg-custom-radial'>
 					<PiMapPinFill className='w-5 h-5 mx-auto text-white ' />
