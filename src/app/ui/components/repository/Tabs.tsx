@@ -78,8 +78,8 @@ export function RepoOverviewTab() {
 							<CardFooter className='flex flex-col items-start px-6'>
 								<h1 className='font-bold text-lg'>Most Starred</h1>
 								<p className='text-muted-foreground'>
-									Anup's repositories have garnered significant attention, with
-									multiple projects receiving over 100 stars
+									Anup&apos;s repositories have garnered significant attention,
+									with multiple projects receiving over 100 stars
 								</p>
 							</CardFooter>
 						</Card>
@@ -112,7 +112,7 @@ export function RepoOverviewTab() {
 									Top Contributing Repositories
 								</h1>
 								<p className='text-muted-foreground'>
-									Anup's top active repositories, highlighting dedicated
+									Anup&apos;s top active repositories, highlighting dedicated
 									contributions and consistent effort
 									{/* Emphasizes which repositories are the most active, showcasing
 									the user's contributions and effort in their projects. */}
