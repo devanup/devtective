@@ -2,6 +2,7 @@
 import 'chart.js/auto';
 
 import { Bar } from 'react-chartjs-2';
+import { ChartOptions } from 'chart.js';
 
 const data = {
 	labels: [
@@ -14,10 +15,7 @@ const data = {
 	],
 	datasets: [
 		{
-			// label: '# of stars',
-			label: 'stars',
-
-			// make the label dynamic and show the number of stars
+			label: 'Number of Commits',
 			data: [120, 750, 360, 500, 200, 115],
 			backgroundColor: [
 				'rgba(255, 99, 132, 0.6)',
@@ -40,35 +38,21 @@ const data = {
 	],
 };
 
-export function MostStarred() {
-	return (
-		<Bar
-			className='w-[100%] object-contain'
-			height={200}
-			data={data}
-			// width={400}
-			options={{
-				maintainAspectRatio: false,
-				// make the legend hidden
-				plugins: {
-					legend: {
-						display: false,
-					},
-					tooltip: {
-						callbacks: {
-							label: function (context) {
-								const value = context.raw;
-								return `${value}`;
-							},
-						},
-					},
-				},
-				scales: {
-					y: {
-						beginAtZero: true,
-					},
-				},
-			}}
-		/>
-	);
+const options: ChartOptions<'bar'> = {
+	indexAxis: 'y', // Makes the chart horizontal
+	maintainAspectRatio: false,
+	plugins: {
+		legend: {
+			display: false,
+		},
+	},
+	scales: {
+		x: {
+			beginAtZero: true,
+		},
+	},
+};
+
+export function TopContributingRepos() {
+	return <Bar data={data} options={options} />;
 }

@@ -6,8 +6,44 @@ import { MostStarred } from '../charts/MostStarred';
 import { TopLanguages } from '../charts/TopLanguages';
 import { TotalContribution } from '../charts/TotalContrubution';
 import { CommitActivity } from '../charts/CommitActivity';
+import {
+	getRepoStats,
+	getUserStats,
+	getAllRepos,
+} from '@/app/actions/languageStats';
+import { TopContributingRepos } from '../charts/TopContributingRepos';
+
+const fetchRepoStats = async () => {
+	try {
+		const stats = await getRepoStats('devanup', 'devanup');
+		console.log('Repo stats: ', stats);
+	} catch (error) {
+		console.error('Error fetching repo stats:', error);
+	}
+};
+
+const fetchUserStats = async () => {
+	try {
+		const stats = await getUserStats('devanup');
+		console.log('User stats: ', stats);
+	} catch (error) {
+		console.error('Error fetching user stats:', error);
+	}
+};
+
+const fetchAllRepos = async () => {
+	try {
+		const stats = await getAllRepos('leerob');
+		console.log('All Repos: ', stats);
+	} catch (error) {
+		console.error('Error fetching all repos:', error);
+	}
+};
 
 export function RepoOverviewTab() {
+	// fetchRepoStats();
+	// fetchUserStats();
+	fetchAllRepos();
 	return (
 		<Tabs
 			defaultValue='stats'
@@ -42,7 +78,8 @@ export function RepoOverviewTab() {
 							<CardFooter className='flex flex-col items-start px-6'>
 								<h1 className='font-bold text-lg'>Most Starred</h1>
 								<p className='text-muted-foreground'>
-									Anup has 10+ repositories with 100+ stars
+									Anup&apos;s repositories have garnered significant attention,
+									with multiple projects receiving over 100 stars
 								</p>
 							</CardFooter>
 						</Card>
@@ -58,7 +95,7 @@ export function RepoOverviewTab() {
 							<CardFooter className='flex flex-col items-start px-6'>
 								<h1 className='font-bold text-lg'>Top Languages</h1>
 								<p className='text-muted-foreground'>
-									Anup is proficient in JavaScript, TypeScript, and Python.
+									Anup is proficient in JavaScript, TypeScript, and Python
 								</p>
 							</CardFooter>
 						</Card>
@@ -67,12 +104,18 @@ export function RepoOverviewTab() {
 							<CardContent className='h-[300px] p-6 rounded-xl'>
 								{/* <span>Most Starred</span> */}
 								{/* <TotalContribution /> */}
-								<CommitActivity />
+								{/* <CommitActivity /> */}
+								<TopContributingRepos />
 							</CardContent>
 							<CardFooter className='flex flex-col items-start px-6'>
-								<h1 className='font-bold text-lg'>Commit Activity</h1>
+								<h1 className='font-bold text-lg'>
+									Top Contributing Repositories
+								</h1>
 								<p className='text-muted-foreground'>
-									Coding activity provides insight into engagement with projects
+									Anup&apos;s top active repositories, highlighting dedicated
+									contributions and consistent effort
+									{/* Emphasizes which repositories are the most active, showcasing
+									the user's contributions and effort in their projects. */}
 									{/*<br /> Regular contributions demonstrate dedication and
 									ongoing involvement in development tasks. */}
 								</p>
