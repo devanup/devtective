@@ -23,17 +23,17 @@ export default function Home() {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const [userData, repos, languages, topContributingRepos] =
-				await Promise.all([
-					fetchUser(searchedUser),
-					fetchRepos(searchedUser),
-					getUserStats(searchedUser),
-					getTopContributingRepos(searchedUser),
-				]);
+			// const [userData, repos, languages, topContributingRepos] =
+			const [userData, repos, languages] = await Promise.all([
+				fetchUser(searchedUser),
+				fetchRepos(searchedUser),
+				getUserStats(searchedUser),
+				// getTopContributingRepos(searchedUser),
+			]);
 			setUserData(userData);
 			setRepos(repos);
 			setLanguages(languages as any[]);
-			setTopContributingRepos(topContributingRepos);
+			// setTopContributingRepos(topContributingRepos);
 
 			// Extract first name from userData.name
 			const firstName = extractFirstName(userData?.name);
