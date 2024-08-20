@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import GridBackGround from './ui/components/common/GridBackGround';
+import GridBackGround from '../components/common/GridBackGround';
 import { Toaster } from '@/components/ui/toaster';
-
+import { ThemeProvider } from '../components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -18,10 +18,14 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
-			<body className={`${inter.className}`}>
-				<GridBackGround />
-				{children}
+		<html lang='en' suppressHydrationWarning>
+			<body
+				className={`${inter.className} transition-all ease-in-out duration-300`}
+			>
+				<ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+					<GridBackGround />
+					{children}
+				</ThemeProvider>
 				<Toaster />
 			</body>
 		</html>
