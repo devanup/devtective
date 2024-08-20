@@ -8,6 +8,7 @@
 
 @layer base {
 	:root {
+		--theme-bg: rgba(255, 255, 255, 0.8);
 		--background: 0 0% 100%;
 		--foreground: 222.2 84% 4.9%;
 		--card: 0 0% 100%;
@@ -36,6 +37,7 @@
 	}
 
 	.dark {
+		--theme-bg: rgba(0, 0, 0, 0.7);
 		--background: 222.2 84% 4.9%;
 		--foreground: 210 40% 98%;
 		--card: 222.2 84% 4.9%;
@@ -63,6 +65,12 @@
 	}
 }
 
+.from-theme-bg {
+	--tw-gradient-from: var(--theme-bg);
+	--tw-gradient-to: transparent;
+	--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 @layer base {
 	* {
 		@apply border-border;
@@ -70,4 +78,23 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+.always-visible-scrollbar {
+	overflow-y: scroll;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+.always-visible-scrollbar::-webkit-scrollbar {
+	width: 8px;
+}
+
+.always-visible-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.always-visible-scrollbar::-webkit-scrollbar-thumb {
+	background-color: rgba(155, 155, 155, 0.5);
+	border-radius: 10px;
+	border: transparent;
 }

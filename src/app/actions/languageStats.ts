@@ -30,15 +30,15 @@ export const getUserStats = (username: string) => {
 
 // getAllRepos(callback)
 
-export const getAllRepos = (username: string) => {
-	return new Promise((resolve, reject) => {
-		const user = new GhPolyglot(username);
-		user.getAllRepos((err, stats) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(stats);
-			}
-		});
-	});
-};
+// export const getAllRepos = (username: string) => {
+// 	return new Promise((resolve, reject) => {
+// 		const user = new GhPolyglot(username);
+// 		user.getAllRepos((err, stats) => {
+// 			if (err) {
+// 				reject(err);
+// 			} else {
+// 				resolve(stats);
+// 			}
+// 		});
+// 	});
+// };
