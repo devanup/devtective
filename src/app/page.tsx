@@ -7,8 +7,11 @@ import { Header } from '../components/Header';
 import { fetchUser } from '@/lib/fetchUser';
 import { fetchRepos } from '@/lib/fetchRepos';
 import { getUserStats } from '@/lib/getLangData';
+import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
 import { extractFirstName } from '@/utils/nameUtils';
 import { UserData } from '@/types/user';
+
+// import { fetchRepoStats } from '@/lib/fetchRepoStats';
 
 export default function Home() {
 	const [userData, setUserData] = useState<UserData | null>(null);
@@ -16,25 +19,33 @@ export default function Home() {
 	const [languages, setLanguages] = useState<any[]>([]);
 	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
 	const [name, setName] = useState<string | null>(null);
-	const [searchedUser, setSearchedUser] = useState<string>('leerob');
+	const [searchedUser, setSearchedUser] = useState<string>('sarahdayan');
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const [userData, repos, languages] = await Promise.all([
-				fetchUser(searchedUser),
-				fetchRepos(searchedUser),
-				getUserStats(searchedUser),
-			]);
+			const [userData, repos, languages, topContributingRepos] =
+				await Promise.all([
+					fetchUser(searchedUser),
+					fetchRepos(searchedUser),
+					getUserStats(searchedUser),
+					getTopContributingRepos(searchedUser),
+				]);
 			setUserData(userData);
 			setRepos(repos);
 			setLanguages(languages as any[]);
+			setTopContributingRepos(topContributingRepos);
 
-			// Extracting the first name from userData.name
+			// Extract first name from userData.name
 			const firstName = extractFirstName(userData?.name);
 			setName(firstName);
 		};
 		fetchData();
 	}, [searchedUser]);
+
+	// console.log('userData page: ', userData);
+	// console.log('name(page): ', name);
+	// console.log('userName(page): ', userName);
+	// console.log('topContributingRepos(page): ', topContributingRepos);
 
 	return (
 		<main className='px-8 pb-8 max-w-[1800px] mx-auto antialiased'>
@@ -54,7 +65,7 @@ export default function Home() {
 					topContributingRepos={topContributingRepos}
 					name={name}
 					userName={searchedUser}
-				/>
+				/>{' '}
 			</div>
 		</main>
 	);
