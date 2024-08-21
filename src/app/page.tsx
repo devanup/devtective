@@ -19,7 +19,7 @@ export default function Home() {
 	const [languages, setLanguages] = useState<any[]>([]);
 	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
 	const [name, setName] = useState<string | null>(null);
-	const [searchedUser, setSearchedUser] = useState<string>('sarahdayan');
+	const [searchedUser, setSearchedUser] = useState<string>('leerob');
 
 	useEffect(() => {
 		const fetchData = async () => {
