@@ -25,5 +25,3 @@ While Devtective already delivers valuable insights, there's always room for fut
 ## Conclusion
 
 Devtective showcases the power of combining technical expertise with thoughtful design. It’s more than just an analytics tool; it’s a platform that transforms raw data into actionable insights, all while offering a smooth and intuitive user experience. As the project develops, it will keep pushing the boundaries of what’s possible in data-driven analysis and user-centric design.
-
-Devtective is a GitHub analytics tool that transforms raw data into a compelling narrative, offering deep insights into user profiles, repositories, and contributions. Leveraging modern technologies like Next.js, TypeScript, Tailwind CSS, and Chart.js, this app delivers a powerful and visually engaging experience, turning GitHub activity into actionable insights.
