@@ -32,6 +32,6 @@ Devtective showcases the power of combining technical expertise with thoughtful 
 
 This project wouldn't have been possible without the following resources:
 
-- [gh-polyglot](https://www.npmjs.com/package/gh-polyglot)
-- [GitHub GraphQL API](https://docs.github.com/en/graphql)
-- [Aceternity UI](https://ui.aceternity.com/)
+- [gh-polyglot](https://www.npmjs.com/package/gh-polyglot) - A GitHub language statistics tool that provides insights into the programming languages used across repositories.
+- [GitHub GraphQL API](https://docs.github.com/en/graphql) - A powerful API that allows precise and flexible data retrieval from GitHub, enabling detailed analytics and insights.
+- [Aceternity UI](https://ui.aceternity.com/) - A user interface component library that offers pre-built, customizable elements to enhance web application design and functionality.
