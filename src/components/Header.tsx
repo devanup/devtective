@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CommandIcon, Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useTheme } from 'next-themes';
@@ -17,7 +17,6 @@ import { fetchRepos } from '@/lib/fetchRepos';
 import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
 import { getUserStats } from '@/lib/getLangData';
 import { extractFirstName } from '@/utils/nameUtils';
-import { ImSpinner2 } from 'react-icons/im';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
@@ -47,10 +46,12 @@ export function Header({
 	const { setTheme, resolvedTheme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+	// const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
+		if (isLoading) return; // Prevent submission if already loading
+
 		const formData = new FormData(e.target as HTMLFormElement);
 		const username = formData.get('search') as string;
 
@@ -169,25 +170,24 @@ export function Header({
 
 	const handleInputFocus = () => {
 		setIsInputFocused(true);
-		setIsOverlayVisible(true);
+		// setIsOverlayVisible(true);
 	};
 
 	const handleInputBlur = () => {
 		setIsInputFocused(false);
-		// Only hide overlay if not loading
 		if (!isLoading) {
-			setIsOverlayVisible(false);
+			// setIsOverlayVisible(false);
 		}
 	};
 
 	const toggleSearch = () => {
 		setIsSearchVisible(!isSearchVisible);
-		setIsOverlayVisible(!isSearchVisible);
+		// setIsOverlayVisible(!isSearchVisible);
 	};
 
 	const hideSearch = () => {
 		setIsSearchVisible(false);
-		setIsOverlayVisible(false);
+		// setIsOverlayVisible(false);
 	};
 
 	useEffect(() => {
@@ -239,23 +239,26 @@ export function Header({
 
 	return (
 		<header
-			className={`flex items-center justify-between mb-10 pt-8 w-full bg-gradient-to-b ${
+			className={`flex items-center justify-between pt-8 w-full bg-gradient-to-b ${
 				resolvedTheme === 'dark'
 					? 'from-black/50 to-transparent'
 					: 'from-white to-transparent'
 			}`}
 		>
 			{/* bg-overlay for small screen */}
-			{isOverlayVisible && (
+			{/* {isOverlayVisible && (
 				<div
 					className='absolute md:hidden w-full h-screen inset-0 bg-gradient-to-b dark:from-black/50 from-white to-transparent rounded-none z-10 backdrop-blur-md'
-					onClick={hideSearch}
+					onClick={handleOverlayClick}
 				/>
-			)}
+			)} */}
+
 			{/* Logo */}
 			<Link
 				href=''
-				className='flex items-center space-x-3 relative'
+				className={`flex items-center space-x-3 relative transition-all ease-in-out duration-200 ${
+					isSearchVisible ? 'opacity-50 blur-md pointer-events-none' : ''
+				}`}
 				onClick={handleLogoClick}
 			>
 				<div
@@ -273,12 +276,16 @@ export function Header({
 				</span>
 			</Link>
 			{/* Search Input */}
-			<div className='flex justify-center relative'>
+			<div
+				className={`flex justify-end md:justify-center mr-5 relative ${
+					isSearchVisible ? 'w-full' : ''
+				}`}
+			>
 				<form
 					onSubmit={handleSubmit}
 					className={`items-center justify-between md:bg-opacity-20 text-md py-1 pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
 						workSans.className
-					} z-20 ${isSearchVisible ? 'ml-6 flex ' : 'hidden md:flex'} ${
+					} z-20 ${isSearchVisible ? 'flex ' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
 					}`}
 				>
@@ -319,13 +326,20 @@ export function Header({
 					size={'icon'}
 					onClick={toggleSearch}
 				>
-					<Search size={24} />
+					{isSearchVisible ? (
+						<X size={24} onClick={hideSearch} />
+					) : (
+						<Search size={24} />
+					)}
 				</Button>
 				{/* Theme Toggle */}
 				<Button
 					variant={'link'}
 					size={'icon'}
 					onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+					className={` transition-all ease-in-out duration-200 ${
+						isSearchVisible ? 'opacity-90 blur-sm pointer-events-none' : ''
+					}`}
 				>
 					{resolvedTheme === 'dark' ? (
 						<BsFillMoonStarsFill size={22} className='text-muted-foreground' />
