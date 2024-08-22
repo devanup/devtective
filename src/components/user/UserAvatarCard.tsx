@@ -25,7 +25,7 @@ interface UserData {
 // Avatar image
 function Avatar({ src }: { src: string }) {
 	return (
-		<div className='relative w-[110px] h-[110px] md:w-[170px] md:h-[170px]'>
+		<div className='relative aspect-square w-[110px] md:w-[250px] mb-4 md:mb-0'>
 			<Image
 				src={src}
 				alt='User avatar'
@@ -57,19 +57,21 @@ function UserInfo({ name, login }: { name: string | null; login: string }) {
 			</Tooltip>
 		</TooltipProvider>
 	) : (
-		<h1 className={`text-3xl font-bold ${gabarito.className} capitalize`}>
+		<h1
+			className={`text-3xl font-bold ${gabarito.className} capitalize text-center md:text-left`}
+		>
 			{displayName}
 		</h1>
 	);
 
 	return (
-		<div className='flex flex-col space-y-2'>
+		<div className='flex flex-col space-y-2 w-full'>
 			{NameComponent}
 			<LinkPreview
 				url={`https://github.com/${login}`}
-				className={`text-xl text-muted-foreground w-fit ${jetBrainsMono.className} hover:text-gray-600 transition-colors duration-300 ease-in-out`}
+				className={`text-xl text-muted-foreground w-fit ${jetBrainsMono.className} hover:text-gray-600 transition-colors duration-300 ease-in-out w-full md:w-fit`}
 			>
-				<div className='flex items-center text-lg dark:text-muted-foreground'>
+				<div className='flex items-center justify-center text-lg dark:text-muted-foreground w-full'>
 					<span>@{login}</span>
 				</div>
 			</LinkPreview>
@@ -88,7 +90,7 @@ function LoadingFallback() {
 
 function UserAvatarContent({ userData }: { userData: UserData }) {
 	return (
-		<div className='flex items-center space-x-6'>
+		<div className='flex flex-col md:flex-row space-y-4 md:space-y-0 items-center md:space-x-6 space-x-0'>
 			<Avatar src={userData.avatar_url} />
 			<UserInfo name={userData.name} login={userData.login} />
 		</div>
