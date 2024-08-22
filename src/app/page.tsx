@@ -19,7 +19,11 @@ export default function Home() {
 	const [languages, setLanguages] = useState<any[]>([]);
 	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
 	const [name, setName] = useState<string | null>(null);
-	const [searchedUser, setSearchedUser] = useState<string>('leerob');
+
+	const initialUsers = ['leerob', 'karpathy', 'delbaoliveira', 'lydiahallie'];
+	const [searchedUser, setSearchedUser] = useState<string>(() => {
+		return initialUsers[Math.floor(Math.random() * initialUsers.length)];
+	});
 
 	useEffect(() => {
 		const fetchData = async () => {
