@@ -47,6 +47,7 @@ export function Header({
 	const { setTheme, resolvedTheme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
@@ -168,18 +169,25 @@ export function Header({
 
 	const handleInputFocus = () => {
 		setIsInputFocused(true);
+		setIsOverlayVisible(true);
 	};
 
 	const handleInputBlur = () => {
 		setIsInputFocused(false);
+		// Only hide overlay if not loading
+		if (!isLoading) {
+			setIsOverlayVisible(false);
+		}
 	};
 
 	const toggleSearch = () => {
 		setIsSearchVisible(!isSearchVisible);
+		setIsOverlayVisible(!isSearchVisible);
 	};
 
 	const hideSearch = () => {
 		setIsSearchVisible(false);
+		setIsOverlayVisible(false);
 	};
 
 	useEffect(() => {
@@ -238,7 +246,7 @@ export function Header({
 			}`}
 		>
 			{/* bg-overlay for small screen */}
-			{isSearchVisible && isLoading && (
+			{isOverlayVisible && (
 				<div
 					className='absolute md:hidden w-full h-screen inset-0 bg-gradient-to-b dark:from-black/50 from-white to-transparent rounded-none z-10 backdrop-blur-md'
 					onClick={hideSearch}
