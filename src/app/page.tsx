@@ -52,7 +52,7 @@ export default function Home() {
 	// console.log('topContributingRepos(page): ', topContributingRepos);
 
 	return (
-		<main className='px-8 pb-8 max-w-[1800px] mx-auto antialiased'>
+		<main className='px-5 md:px-8 pb-8 max-w-[1800px] mx-auto antialiased'>
 			<Header
 				setUserData={setUserData}
 				setRepos={setRepos}
