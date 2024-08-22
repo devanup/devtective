@@ -13,7 +13,7 @@ export function ProfileStatSkeleton() {
 	return (
 		<Card className='flex md:flex-row flex-col items-center justify-evenly bg-gray-100 rounded-lg animate-pulse'>
 			{[1, 2, 3].map((index) => (
-				<div key={index} className='-mb-6 md:mb-0'>
+				<div key={index} className=' md:mb-0'>
 					<CardHeader className='-mb-4 text-center'>
 						<CardTitle
 							className={`w-15 h-8 tracking-wider md:text-xl text-lg uppercase bg-gray-300 dark:bg-gray-700 rounded-lg animate-pulse`}
