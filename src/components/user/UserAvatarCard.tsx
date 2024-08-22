@@ -4,6 +4,7 @@ import Image from 'next/image';
 import {
 	AvatarSkeleton,
 	UserInfoSkeleton,
+	LoadingFallback,
 } from '../skeletons/UserAvatarSkeleton';
 import { Suspense } from 'react';
 import {
@@ -79,14 +80,14 @@ function UserInfo({ name, login }: { name: string | null; login: string }) {
 	);
 }
 
-function LoadingFallback() {
-	return (
-		<div className='flex items-center space-x-6'>
-			<AvatarSkeleton />
-			<UserInfoSkeleton />
-		</div>
-	);
-}
+// function LoadingFallback() {
+// 	return (
+// 		<div className='flex items-center space-x-6'>
+// 			<AvatarSkeleton />
+// 			<UserInfoSkeleton />
+// 		</div>
+// 	);
+// }
 
 function UserAvatarContent({ userData }: { userData: UserData }) {
 	return (
