@@ -61,7 +61,7 @@ export default function Home() {
 				setUserName={setName}
 				setSearchedUser={setSearchedUser}
 			/>
-			<div className='flex lg:flex-row flex-col lg:space-x-12 space-x-0 lg:space-y-0 space-y-8'>
+			<div className='flex lg:flex-row flex-col lg:space-x-12 space-x-0 lg:space-y-0 space-y-8 mt-12'>
 				<ProfileOverView userData={userData} />
 				<RepoOverview
 					repos={repos}
