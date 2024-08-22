@@ -1,6 +1,6 @@
 # Devtective 🕵️‍♂️
 
-Devtective is a GitHub analytics tool that unveils the story behind a developer's journey. By tapping into GitHub's API, it collects and analyzes user profiles, repositories, and coding activities, transforming raw data into clear visualizations and statistics. Whether you're exploring your own GitHub footprint or understanding another developer's expertise, Devtective provides a sophisticated lens to view and analyze GitHub activity, turning complex coding histories into accessible insights about a developer's journey.
+Devtective is a GitHub analytics tool that unveils the story behind a developer's journey. By tapping into GitHub's API, it collects and analyzes user profiles, repositories, and coding activities, transforming raw data into clear visualizations and statistics. Whether you're exploring your own GitHub activity or understanding another developer's expertise, Devtective provides a sophisticated lens to view and analyze GitHub activity, turning complex coding histories into accessible insights about a developer's journey.
 
 ## Features
 
