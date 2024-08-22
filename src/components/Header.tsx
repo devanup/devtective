@@ -270,9 +270,13 @@ export function Header({
 						backgroundRepeat: 'no-repeat',
 					}}
 				/>
-				<span className={`text-lg absolute left-14 ${jetBrainsMono.className}`}>
+				<span
+					className={`text-lg absolute left-14 ${jetBrainsMono.className} ${
+						isSearchVisible ? 'hidden' : ''
+					}`}
+				>
 					Dev
-					<span className='text-accent-foreground/70'>tective</span>
+					<span className={`text-accent-foreground/70`}>tective</span>
 				</span>
 			</Link>
 			{/* Search Input */}
