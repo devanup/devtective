@@ -25,3 +25,11 @@ While Devtective already delivers valuable insights, there's always room for fut
 ## Conclusion
 
 Devtective showcases the power of combining technical expertise with thoughtful design. It’s more than just an analytics tool; it’s a platform that transforms raw data into actionable insights, all while offering a smooth and intuitive user experience. As the project develops, it will keep pushing the boundaries of what’s possible in data-driven analysis and user-centric design.
+
+## Acknowledgements
+
+This project wouldn't have been possible without the following resources:
+
+- [gh-polyglot](https://www.npmjs.com/package/gh-polyglot)
+- [GitHub GraphQL API](https://docs.github.com/en/graphql)
+- [Aceternity UI](https://ui.aceternity.com/)
