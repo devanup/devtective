@@ -57,9 +57,9 @@ function StatisticsTabContent({
 
 	return (
 		<div className='flex flex-col space-y-6 items-center w-full mt-8 mb-10 '>
-			<div className='flex w-full mx-auto space-x-6'>
+			<div className='flex flex-col xl:flex-row w-full mx-auto space-x-0 xl:space-x-6 space-y-6 xl:space-y-0'>
 				{/* Total Contributed */}
-				<Card className='w-[60%] flex flex-col justify-evenly rounded-xl'>
+				<Card className='w-[100%] xl:w-[60%] flex flex-col justify-evenly rounded-xl'>
 					<CardContent className='h-[300px] p-6 rounded-xl'>
 						<TotalContributedChart userName={userName} />
 					</CardContent>
@@ -82,7 +82,7 @@ function StatisticsTabContent({
 				</Card>
 
 				{/* Most Starred */}
-				<Card className='w-[40%] flex flex-col justify-evenly rounded-xl'>
+				<Card className='w-[100%] xl:w-[40%] flex flex-col justify-evenly rounded-xl'>
 					<CardContent className='h-[300px] p-6 rounded-xl'>
 						<MostStarredChart userName={userName} />
 					</CardContent>
@@ -102,9 +102,9 @@ function StatisticsTabContent({
 				</Card>
 			</div>
 
-			<div className='flex justify-evenly w-full mx-auto space-x-6'>
+			<div className='flex flex-col xl:flex-row w-full mx-auto space-x-0 xl:space-x-6 space-y-6 xl:space-y-0'>
 				{/* Top Languages */}
-				<Card className='w-[40%] flex flex-col rounded-xl'>
+				<Card className='w-[100%] xl:w-[40%] flex flex-col rounded-xl'>
 					<CardContent className='h-[300px] rounded-xl mt-6'>
 						<TopLanguagesChart languages={languages} userName={userName} />
 					</CardContent>
@@ -124,7 +124,7 @@ function StatisticsTabContent({
 				</Card>
 
 				{/* Top Contributing Repos */}
-				<Card className='w-[60%] flex flex-col justify-evenly rounded-xl'>
+				<Card className='w-[100%] xl:w-[60%] flex flex-col justify-evenly rounded-xl'>
 					<CardContent className='h-[300px] p-6 rounded-xl'>
 						<TopContributingReposChart userName={userName} />
 					</CardContent>
