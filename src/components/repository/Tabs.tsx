@@ -33,7 +33,7 @@ export function RepoOverviewTab({
 					<TabsTrigger value='repositories'>Repositories</TabsTrigger>
 				</TabsList>
 				{/* Statistics tab */}
-				<TabsContent value='stats' className='px-10'>
+				<TabsContent value='stats' className=' px-5 md:px-10 '>
 					<StatisticsTab
 						repos={repos}
 						languages={languages}
