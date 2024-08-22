@@ -278,7 +278,7 @@ export function Header({
 					onSubmit={handleSubmit}
 					className={`items-center justify-between md:bg-opacity-20 text-md py-1 pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
 						workSans.className
-					} z-20 ${isSearchVisible ? 'flex' : 'hidden md:flex'} ${
+					} z-20 ${isSearchVisible ? 'ml-6 flex ' : 'hidden md:flex'} ${
 						isInputFocused ? 'shadow-lg' : ''
 					}`}
 				>
@@ -294,13 +294,14 @@ export function Header({
 						onBlur={handleInputBlur}
 						ref={inputRef}
 					/>
-					<span
+					{/* Shortcut to open search */}
+					{/* <span
 						className={`flex absolute right-3 flex-row items-center text-muted-foreground ${
 							isInputFocused ? 'hidden' : ''
 						}`}
 					>
 						<CommandIcon size={12} />K
-					</span>
+					</span> */}
 					{isLoading && (
 						<span className='absolute flex justify-center items-center space-x-2 top-14 left-0 text-muted-foreground animate-pulse w-full'>
 							<span className='mt-2 text-sm animate-bounce'>🔍</span>
