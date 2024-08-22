@@ -290,7 +290,7 @@ export function Header({
 					className={`items-center justify-between md:bg-opacity-20 text-md py-1 pl-3 bg-gray-400/20 rounded-xl relative md:static  ${
 						workSans.className
 					} z-20 ${isSearchVisible ? 'flex ' : 'hidden md:flex'} ${
-						isInputFocused ? 'shadow-lg' : ''
+						isInputFocused ? 'md:shadow-lg shadow-none' : ''
 					}`}
 				>
 					<Label htmlFor='search' className=''>
