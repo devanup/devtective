@@ -162,6 +162,7 @@ export function Header({
 			}
 		} finally {
 			setIsLoading(false);
+			hideSearch();
 		}
 	};
 
@@ -237,9 +238,9 @@ export function Header({
 			}`}
 		>
 			{/* bg-overlay for small screen */}
-			{isSearchVisible && (
+			{isSearchVisible && isLoading && (
 				<div
-					className='absolute md:hidden w-full h-screen inset-0 bg-gradient-to-b from-white to-transparent rounded-none z-10 backdrop-blur-md'
+					className='absolute md:hidden w-full h-screen inset-0 bg-gradient-to-b dark:from-black/50 from-white to-transparent rounded-none z-10 backdrop-blur-md'
 					onClick={hideSearch}
 				/>
 			)}
