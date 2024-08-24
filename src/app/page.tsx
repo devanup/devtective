@@ -20,7 +20,8 @@ export default function Home() {
 	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
 	const [name, setName] = useState<string | null>(null);
 
-	const initialUsers = ['leerob', 'karpathy', 'delbaoliveira', 'lydiahallie'];
+	// const initialUsers = ['leerob', 'karpathy', 'delbaoliveira', 'lydiahallie'];
+	const initialUsers = ['leerob'];
 	const [searchedUser, setSearchedUser] = useState<string>(() => {
 		return initialUsers[Math.floor(Math.random() * initialUsers.length)];
 	});

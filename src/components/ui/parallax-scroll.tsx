@@ -10,7 +10,6 @@ import { SiGithub } from 'react-icons/si';
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { IoStar } from 'react-icons/io5';
 import { BiGitRepoForked } from 'react-icons/bi';
-import { useTheme } from 'next-themes';
 
 interface ParallaxScrollProps {
 	repos: Repo[];
@@ -80,7 +79,7 @@ export const ParallaxScroll = ({
 	className,
 	onVisibleReposChange,
 }: ParallaxScrollProps) => {
-	const [visibleRepos, setVisibleRepos] = useState(6);
+	const [visibleRepos, setVisibleRepos] = useState(10);
 	const gridRef = useRef<HTMLDivElement>(null);
 	const [showButton, setShowButton] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -118,7 +117,6 @@ export const ParallaxScroll = ({
 	});
 
 	const displayedRepos = sortedRepos.slice(0, visibleRepos);
-	const { theme } = useTheme();
 
 	const handleShowMore = () => {
 		const newVisibleRepos = Math.min(visibleRepos + 6, repos.length);
@@ -150,7 +148,7 @@ export const ParallaxScroll = ({
 	return (
 		<div
 			className={cn(
-				'md:h-[44rem] overflow-y-auto items-start w-full relative rounded-b-xl always-visible-scrollbar',
+				'h-fit md:h-[44rem] overflow-y-auto items-start w-full relative rounded-b-xl always-visible-scrollbar',
 				className,
 			)}
 			ref={gridRef}
@@ -168,7 +166,7 @@ export const ParallaxScroll = ({
 			{/* Show more button */}
 			<div className='sticky bottom-0 left-0 right-0 backdrop-blur-[1px]'>
 				<div className='h-28 bg-gradient-to-t from-background via-background/60 to-transparent'></div>
-				<div className='bg-background flex justify-center items-center h-12 px-7'>
+				{/* <div className='bg-background flex justify-center items-center h-12 px-7'>
 					{showButton && visibleRepos < repos.length && (
 						<button
 							onClick={handleShowMore}
@@ -177,7 +175,7 @@ export const ParallaxScroll = ({
 							Show More
 						</button>
 					)}
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
