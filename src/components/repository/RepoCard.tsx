@@ -18,13 +18,13 @@ export function RepoCard({ repos }: RepoProps) {
 			</div>
 
 			{/* Repo name, description, language */}
-			<>
+			<div className='flex flex-col gap-2'>
 				<span className='text-gray-500 text-sm'>TypeScript</span>
 				<h1 className='font-bold text-2xl'>{repos[3].name}</h1>
 				<p className='text-sm text-gray-500 my-3 flex-grow'>
 					{repos[3].description}
 				</p>
-			</>
+			</div>
 
 			{/* Language, Stars, Forks */}
 			<div className='text-gray-500 flex items-center gap-2 mt-auto text-sm'>
