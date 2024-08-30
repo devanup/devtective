@@ -14,6 +14,7 @@ export function TotalContributedChart({
 	const [data, setData] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [rateLimit, setRateLimit] = useState<any>(null);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -25,18 +26,20 @@ export function TotalContributedChart({
 					const fetchedData = await getContributions(userName);
 					// console.log('Fetched contribution data:', fetchedData);
 					setData(fetchedData);
+					setIsLoading(false);
+					setRateLimit(fetchedData.rateLimit);
 				} catch (err) {
 					// console.error('Error fetching contribution data:', err);
-					setError(
-						`Failed to fetch contribution data. Please try again later.`,
-					);
-				} finally {
-					setIsLoading(false);
+					setError('Failed to fetch contribution data. Please try again.');
 				}
 			}
 		}
 		fetchData();
 	}, [userName]);
+
+	// useEffect(() => {
+	// 	console.log('rateLimit(TotalContributedChart)=> ', rateLimit);
+	// }, [rateLimit]);
 
 	if (isLoading) return <TotalContributedSkeleton />;
 	if (error) return <div className='text-red-500 text-center'>{error}</div>;

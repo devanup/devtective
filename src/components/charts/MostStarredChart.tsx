@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { MostStarred } from './MostStarred';
 import { getMostStarredRepos } from '@/lib/getMostStarredRepos';
 import { Card, CardContent } from '@/components/ui/card';
-import { fetchAllRepos } from '@/lib/fetchRepos';
+import { fetchRepos } from '@/lib/fetchRepos';
 import { Repo } from '@/types/repo';
 
 export function MostStarredChart({ userName }: { userName: string }) {
@@ -16,17 +16,16 @@ export function MostStarredChart({ userName }: { userName: string }) {
 			if (userName && userName !== 'User') {
 				setIsLoading(true);
 				try {
-					const allRepos = await fetchAllRepos(userName);
-					const ownedRepos = allRepos.filter(
-						(repo: Repo) => repo.owner.login === userName,
-					);
-					const mostStarredData = getMostStarredRepos(ownedRepos);
+					const ownedRepos = await fetchRepos(userName, 5);
+					// const ownedRepos = allRepos.filter(
+					// 	(repo: Repo) => repo.owner.login === userName,
+					// );
+					const mostStarredData = getMostStarredRepos(ownedRepos.repos);
 					setData(mostStarredData);
+					setIsLoading(false);
 				} catch (err) {
 					setError('Failed to fetch most starred repos. Please try again.');
 					console.error(err);
-				} finally {
-					setIsLoading(false);
 				}
 			}
 		}
