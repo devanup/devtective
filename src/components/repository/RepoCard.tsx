@@ -32,18 +32,20 @@ export function RepoCard({ repos }: RepoProps) {
 					{/* Stars */}
 					<div className='flex gap-1'>
 						<IoStar size={17} />
-						<span>{abbreviateNumber(repos[3].stargazers_count)}</span>
+						<span>{abbreviateNumber(repos[3].stargazerCount)}</span>
 					</div>
 
 					{/* Forks */}
 					<div className='flex gap-1'>
 						<BiGitRepoForked size={18} />
-						<span>{abbreviateNumber(repos[3].forks)}</span>
+						<span>{abbreviateNumber(repos[3].forkCount)}</span>
 					</div>
 				</div>
 
 				{/* Repo size */}
-				<div className='flex ml-auto'>{abbreviateNumber(repos[3].size)} KB</div>
+				<div className='flex ml-auto'>
+					{abbreviateNumber(repos[3].diskUsage)} KB
+				</div>
 			</div>
 		</Card>
 	);
