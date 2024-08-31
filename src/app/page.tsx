@@ -70,15 +70,12 @@ export default function Home() {
 			try {
 				setLoadingMessage('Loading user data...');
 				const userDataResponse = await cachedFetchUser(searchedUser);
-				// await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between messages
 
 				setLoadingMessage('Loading repositories...');
 				const reposResponse = await cachedFetchRepos(searchedUser);
-				// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				setLoadingMessage('Loading language statistics...');
 				const languagesResponse = await cachedGetUserStats(searchedUser);
-				// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 				setLoadingMessage('Loading top contributing repositories...');
 				const topContributingReposResponse =
@@ -86,7 +83,6 @@ export default function Home() {
 
 				setUserData(userDataResponse.user);
 				setRepos(reposResponse.repos);
-				// console.log('Number of repos => ', reposResponse.repos.length);
 				setLanguages(languagesResponse.stats);
 				setTopContributingRepos(topContributingReposResponse.repoActivities);
 
@@ -112,7 +108,7 @@ export default function Home() {
 				setLoadingMessage(''); // Clear the loading message
 			} catch (error) {
 				console.error('Error fetching data:', error);
-				setLoadingMessage(''); // Clear the loading message
+				setLoadingMessage('');
 				alert('You have reached the rate limit. Please try again later.');
 			} finally {
 				setLoadingMessage('');
@@ -136,8 +132,9 @@ export default function Home() {
 				detailedRateLimit={detailedRateLimit}
 				initialUsers={initialUsers}
 			/>
-			{/* <MultiStepLoaderDemo /> */}
+
 			{isLoading && <LoadingOverlay message={loadingMessage} />}
+
 			<div className='flex lg:flex-row flex-col lg:space-x-12 space-x-0 lg:space-y-0 space-y-8 mt-12'>
 				<ProfileOverView userData={userData} />
 				<RepoOverview

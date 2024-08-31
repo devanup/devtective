@@ -49,7 +49,6 @@ export function RepoOverviewTab({
 			field: 'forkCount',
 			order: 'desc',
 		},
-		// Size
 		{
 			label: 'Largest Size',
 			value: 'size',
@@ -150,12 +149,7 @@ export function RepoOverviewTab({
 						</div>
 					</div>
 
-					{repoCount > 0 && (
-						<RepositoriesTab
-							repos={filteredRepos}
-							// onVisibleReposChange={setVisibleRepos}
-						/>
-					)}
+					{repoCount > 0 && <RepositoriesTab repos={filteredRepos} />}
 				</TabsContent>
 			</Tabs>
 			<Footer />

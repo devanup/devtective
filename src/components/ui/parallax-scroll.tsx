@@ -91,6 +91,7 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 	const gridRef = useRef<HTMLDivElement>(null);
 	const [showButton, setShowButton] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+
 	useEffect(() => {
 		// Simulate loading delay
 		const timer = setTimeout(() => {
@@ -99,6 +100,7 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 
 		return () => clearTimeout(timer);
 	}, []);
+
 	const { scrollYProgress } = useScroll({
 		container: gridRef,
 		offset: ['start start', 'end start'],
@@ -118,20 +120,9 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 	const translateFirst = useTransform(scrollYProgress, [0, 1], [-150, -300]);
 	const translateSecond = useTransform(scrollYProgress, [0, 1], [-150, 200]);
 
-	// const sortedRepos = [...repos].sort((a, b) => {
-	// 	const dateA = new Date(a.updatedAt);
-	// 	const dateB = new Date(b.updatedAt);
-	// 	return dateB.getTime() - dateA.getTime();
-	// });
 	// Check if repos is an array and has items
 	const validRepos = Array.isArray(repos) ? repos : [];
 	const displayedRepos = validRepos.slice(0, VISIBLE_REPOS);
-
-	// const handleShowMore = () => {
-	// 	const newVisibleRepos = Math.min(visibleRepos + 6, repos.length);
-	// 	setVisibleRepos(newVisibleRepos);
-	// 	onVisibleReposChange(newVisibleRepos);
-	// };
 
 	const renderRepoList = (
 		repoList: Repo[],
@@ -153,7 +144,7 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 				  ))}
 		</div>
 	);
-	// console.log('repos=>', repos);
+
 	return (
 		<div
 			className={cn(
@@ -175,16 +166,6 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 			{/* Show more button */}
 			<div className='sticky bottom-0 left-0 right-0 backdrop-blur-[1px]'>
 				<div className='h-28 bg-gradient-to-t from-background via-background/60 to-transparent'></div>
-				{/* <div className='bg-background flex justify-center items-center h-12 px-7'>
-					{showButton && visibleRepos < repos.length && (
-						<button
-							onClick={handleShowMore}
-							className='rounded-xl border border-slate-300 bg-gradient-to-tl from-gray-100 to-gray-200 py-3 mb-20 px-5 text-foreground font-semibold text-sm hover:bg-gradient-to-tl hover:from-gray-200 hover:to-gray-300 dark:border-slate-700 dark:bg-gradient-to-tl dark:from-gray-900 dark:to-gray-800 hover:dark:bg-gradient-to-tl hover:dark:from-gray-800 hover:dark:to-gray-700'
-						>
-							Show More
-						</button>
-					)}
-				</div> */}
 			</div>
 		</div>
 	);
