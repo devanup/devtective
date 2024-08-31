@@ -157,7 +157,7 @@ export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 	return (
 		<div
 			className={cn(
-				'h-fit md:h-[44rem] overflow-y-auto items-start w-full relative rounded-b-xl always-visible-scrollbar',
+				'h-[37rem] md:h-[44rem] overflow-y-auto items-start w-full relative rounded-b-xl always-visible-scrollbar',
 				className,
 			)}
 			ref={gridRef}

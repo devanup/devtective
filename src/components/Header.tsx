@@ -608,7 +608,7 @@ export function Header({
 							<TooltipContent
 								onMouseEnter={() => setIsTooltipVisible(true)}
 								onMouseLeave={() => setIsTooltipVisible(false)}
-								className='mt-0 md:-mt-1 md:mr-0 mr-14'
+								className='mt-0 md:-mt-1 md:mr-0 mr-12'
 							>
 								{getRateLimitTooltipContent()}
 								{isRateLimitWarning && (
