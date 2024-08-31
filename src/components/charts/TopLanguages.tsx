@@ -45,6 +45,9 @@ export function TopLanguages({ data }: { data: LanguageData[] }) {
 				},
 			},
 		},
+		animation: {
+			duration: 400,
+		},
 	};
 
 	// Create the data for the chart

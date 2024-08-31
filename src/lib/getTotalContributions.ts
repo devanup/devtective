@@ -20,10 +20,10 @@ export const getTotalContributions = async (
 	console.log(`Fetching contributions for ${username}`);
 
 	const repos = await fetchRepos(username);
-	console.log(`Fetched ${repos.length} repos`);
+	console.log(`Fetched ${repos.repos.length} repos`);
 
 	// Filter repos that the user doesn't own
-	const contributedRepos = repos.filter(
+	const contributedRepos = repos.repos.filter(
 		(repo: Repo) => repo.owner.login !== username,
 	);
 	console.log(`Found ${contributedRepos.length} contributed repos`);

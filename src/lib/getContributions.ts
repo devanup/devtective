@@ -28,6 +28,11 @@ interface ContributionData {
 	totalContributions: number;
 	weeks: ContributionWeek[];
 	months: ContributionMonth[];
+	rateLimit: {
+		limit: number;
+		remaining: number;
+		resetAt: string;
+	};
 }
 
 export const getContributions = async (
@@ -37,28 +42,33 @@ export const getContributions = async (
 	const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
 
 	const query = `
-    query($username: String!, $from: DateTime!, $to: DateTime!) { 
-      user(login: $username) {
-        contributionsCollection(from: $from, to: $to) {
-          contributionCalendar {
-            totalContributions
-            weeks {
-              contributionDays {
-                weekday
-                date 
-                contributionCount 
-                color
-              }
-            }
-            months {
-              name
-              year
-              firstDay 
-              totalWeeks 
-            }
-          }
+		query($username: String!, $from: DateTime!, $to: DateTime!) { 
+		user(login: $username) {
+			contributionsCollection(from: $from, to: $to) {
+			contributionCalendar {
+				totalContributions
+				weeks {
+				contributionDays {
+					weekday
+					date 
+					contributionCount 
+					color
+				}
+				}
+				months {
+				name
+				year
+				firstDay 
+				totalWeeks 
+				}
+			}
+			}
+		}
+		rateLimit {
+          limit
+          remaining
+          resetAt
         }
-      }
     }
     `;
 
@@ -79,6 +89,11 @@ export const getContributions = async (
 					};
 				};
 			};
+			rateLimit: {
+				limit: number;
+				remaining: number;
+				resetAt: string;
+			};
 		}>(query, variables);
 		const contributionCalendar =
 			response.user.contributionsCollection.contributionCalendar;
@@ -87,6 +102,7 @@ export const getContributions = async (
 			totalContributions: contributionCalendar.totalContributions,
 			weeks: contributionCalendar.weeks,
 			months: contributionCalendar.months,
+			rateLimit: response.rateLimit,
 		};
 	} catch (error) {
 		console.error('Error fetching contribution data:', error);

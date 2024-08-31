@@ -2,16 +2,14 @@ import { Repo } from '../types/repo';
 
 export const getMostStarredRepos = (repos: Repo[]) => {
 	// Sort the repositories based on the number of stars in descending order
-	const sortedRepos = repos.sort(
-		(a, b) => b.stargazers_count - a.stargazers_count,
-	);
+	const sortedRepos = repos.sort((a, b) => b.stargazerCount - a.stargazerCount);
 
 	// Get the top 5 repositories
 	const topRepos = sortedRepos.slice(0, 5);
 
 	// Format the data for the chart
 	const labels = topRepos.map((repo) => repo.name);
-	const data = topRepos.map((repo) => repo.stargazers_count);
+	const data = topRepos.map((repo) => repo.stargazerCount);
 
 	return {
 		labels,

@@ -6,14 +6,11 @@ const octokit = new Octokit({
 	auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN,
 });
 
-interface Repository {
-	name: string;
-	owner: {
-		login: string;
-	};
-	defaultBranchRef: {
-		name: string;
-	};
+interface RateLimit {
+	limit: number;
+	remaining: number;
+	used: number;
+	reset: number;
 }
 
 interface RepoActivity {
@@ -21,78 +18,103 @@ interface RepoActivity {
 	totalCommits: number;
 }
 
+// In-memory cache object
+const cache = new Map<string, { data: any; expiration: number }>();
+
 export const getTopContributingRepos = async (
 	username: string,
-): Promise<RepoActivity[]> => {
+): Promise<{
+	repoActivities: RepoActivity[];
+	rateLimit: RateLimit;
+}> => {
+	const cacheKey = `top_contributing_repos_${username}`;
+	const cachedData = cache.get(cacheKey);
+
+	// Check if the data is in cache and not expired
+	if (cachedData && cachedData.expiration > Date.now()) {
+		return cachedData.data;
+	}
+
 	try {
-		// Get user's repositories
-		const reposQuery = `
-      query ($username: String!) {
+		const query = `
+		query ($username: String!) {
 			user(login: $username) {
 				repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
-				nodes {
-					name
-					owner {
-					login
-					}
-					defaultBranchRef {
-					name
+					nodes {
+						name
+						defaultBranchRef {
+							target {
+								... on Commit {
+									history {
+										totalCount
+									}
+								}
+							}
+						}
 					}
 				}
-					}
 			}
+			rateLimit {
+				limit
+				remaining
+				used
+				resetAt
+			}	
 		}
-    `;
+		`;
 
-		const reposResponse = await octokit.graphql<{
-			user: { repositories: { nodes: Repository[] } };
-		}>(reposQuery, { username });
-
-		const repos = reposResponse.user.repositories.nodes;
-
-		// Get commit count for each repository
-		const repoActivities: RepoActivity[] = await Promise.all(
-			repos.map(async (repo) => {
-				const commitCountQuery = `
-          query($owner: String!, $name: String!, $branch: String!) {
-            repository(owner: $owner, name: $name) {
-              object(expression: $branch) {
-                ... on Commit {
-                  history {
-                    totalCount
-                  }
-                }
-              }
-            }
-          }
-        `;
-
-				const commitCountResponse = await octokit.graphql<{
-					repository: {
-						object: {
-							history: {
-								totalCount: number;
+		const response = await octokit.graphql<{
+			user: {
+				repositories: {
+					nodes: Array<{
+						name: string;
+						defaultBranchRef: {
+							target: {
+								history: {
+									totalCount: number;
+								};
 							};
 						};
-					};
-				}>(commitCountQuery, {
-					owner: repo.owner.login,
-					name: repo.name,
-					branch: repo?.defaultBranchRef?.name || 'main' || 'master',
-				});
-
-				return {
-					repo: repo.name,
-					totalCommits:
-						commitCountResponse?.repository?.object?.history?.totalCount || 0,
+					}>;
 				};
-			}),
-		);
+			};
+			rateLimit: {
+				limit: number;
+				remaining: number;
+				used: number;
+				resetAt: string;
+			};
+		}>(query, { username });
 
-		// Sort and return top 5 repositories
-		return repoActivities
+		const repos = response.user.repositories.nodes;
+
+		const repoActivities: RepoActivity[] = repos
+			.map((repo) => ({
+				repo: repo.name,
+				totalCommits: repo.defaultBranchRef?.target.history.totalCount || 0,
+			}))
 			.sort((a, b) => b.totalCommits - a.totalCommits)
 			.slice(0, 5);
+
+		const rateLimit: RateLimit = {
+			limit: response.rateLimit.limit,
+			remaining: response.rateLimit.remaining,
+			used: response.rateLimit.used,
+			reset: new Date(response.rateLimit.resetAt).getTime() / 1000,
+		};
+
+		const dataToCache = {
+			repoActivities,
+			rateLimit,
+		};
+
+		// Store the result in the cache with an expiration time of 2 hours
+		cache.set(cacheKey, {
+			data: dataToCache,
+			expiration: Date.now() + 2 * 60 * 60 * 1000,
+		});
+
+		return dataToCache;
 	} catch (error) {
 		console.error('Error fetching top contributing repos:', error);
 		throw error;
