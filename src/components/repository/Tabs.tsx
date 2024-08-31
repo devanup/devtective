@@ -27,41 +27,79 @@ export function RepoOverviewTab({
 	name,
 	userName,
 }: RepoOverviewTabProps) {
-	const [visibleRepos, setVisibleRepos] = useState(6);
+	const [filterValue, setFilterValue] = useState('last_pushed');
+	const [filteredRepos, setFilteredRepos] = useState(repos);
 
 	const filters = [
 		{
-			label: 'Last Updated',
-			value: 'last_updated',
-			field: 'updated_at',
+			label: 'Last Pushed',
+			value: 'last_pushed',
+			field: 'pushedAt',
 			order: 'desc',
-		},
-		{
-			label: 'Last Created',
-			value: 'last_created',
-			field: 'created_at',
-			order: 'desc',
-		},
-		{
-			label: 'Earliest Created',
-			value: 'earliest_created',
-			field: 'created_at',
-			order: 'asc',
 		},
 		{
 			label: 'Most Stars',
 			value: 'most_stars',
-			field: 'stargazers',
+			field: 'stargazerCount',
 			order: 'desc',
 		},
-		// { label: 'Name A-Z', value: 'name' },
-		// { label: 'Name Z-A', value: 'name_desc' },
+		{
+			label: 'Most Forks',
+			value: 'most_forks',
+			field: 'forkCount',
+			order: 'desc',
+		},
+		// Size
+		{
+			label: 'Largest Size',
+			value: 'size',
+			field: 'diskUsage',
+			order: 'desc',
+		},
 	];
-	// alter the repos based on the filter selected
-	const [filteredRepos, setFilteredRepos] = useState(repos);
+
 	useEffect(() => {
-		setFilteredRepos(repos);
-	}, [repos]);
+		if (Array.isArray(repos)) {
+			const sortedRepos = [...repos]
+				.filter((repo) => {
+					switch (filterValue) {
+						case 'last_pushed':
+							return true; // All repos have a pushed date
+						case 'most_stars':
+							return repo.stargazerCount > 0;
+						case 'most_forks':
+							return repo.forkCount > 0;
+						case 'size':
+							return repo.diskUsage > 0;
+						default:
+							return true;
+					}
+				})
+				.sort((a, b) => {
+					switch (filterValue) {
+						case 'last_pushed':
+							return (
+								new Date(b.pushedAt).getTime() - new Date(a.pushedAt).getTime()
+							);
+						case 'most_stars':
+							return b.stargazerCount - a.stargazerCount;
+						case 'most_forks':
+							return b.forkCount - a.forkCount;
+						case 'size':
+							return b.diskUsage - a.diskUsage;
+						default:
+							return 0;
+					}
+				});
+			setFilteredRepos(sortedRepos);
+		} else {
+			setFilteredRepos([]);
+		}
+	}, [repos, filterValue]);
+
+	const repoCount = filteredRepos.length;
+	const displayCount = Math.min(repoCount, 10);
+
 	return (
 		<>
 			<Tabs
@@ -86,19 +124,24 @@ export function RepoOverviewTab({
 				<TabsContent value='repositories'>
 					{/* Number of repos */}
 					<div className='relative text-muted-foreground flex items-center justify-start ml-4 md:ml-0 md:justify-center text-sm -mt-3 mb-0 bg-transparent pt-8 pb-6'>
-						<h1>Showing 10 repositories</h1> {/* Filter menu */}
+						{repoCount > 0 ? (
+							<h1>
+								Showing {displayCount}{' '}
+								{displayCount === 1 ? 'repository' : 'repositories'}
+							</h1>
+						) : (
+							<div className='flex items-center justify-center my-10'>
+								<h1>No repositories match the selected filter</h1>
+							</div>
+						)}
 						<div className='absolute right-4 md:right-10'>
-							<Select>
+							<Select onValueChange={(value) => setFilterValue(value)}>
 								<SelectTrigger className='w-[180px]'>
-									<SelectValue placeholder='Most Stars' />
+									<SelectValue placeholder='Last Pushed' />
 								</SelectTrigger>
 								<SelectContent>
 									{filters.map((filter) => (
-										<SelectItem
-											key={filter.value}
-											disabled
-											value={filter.value}
-										>
+										<SelectItem key={filter.value} value={filter.value}>
 											{filter.label}
 										</SelectItem>
 									))}
@@ -107,10 +150,12 @@ export function RepoOverviewTab({
 						</div>
 					</div>
 
-					<RepositoriesTab
-						repos={repos}
-						onVisibleReposChange={setVisibleRepos}
-					/>
+					{repoCount > 0 && (
+						<RepositoriesTab
+							repos={filteredRepos}
+							// onVisibleReposChange={setVisibleRepos}
+						/>
+					)}
 				</TabsContent>
 			</Tabs>
 			<Footer />

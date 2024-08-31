@@ -26,6 +26,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from './ui/tooltip';
+import { abbreviateNumber } from 'js-abbreviation-number';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
@@ -53,7 +54,7 @@ const CircularLoadingBar = ({
 	const color = getColor(percentage);
 
 	return (
-		<div className='relative size-10 cursor-default group opacity-65 hover:opacity-100 transition-all ease-in-out duration-200'>
+		<div className=' cursor-pointer relative size-10 group opacity-65 hover:opacity-100 transition-all ease-in-out duration-200 ml-2'>
 			<svg className='w-full h-full' viewBox='0 0 40 40'>
 				<circle
 					className='text-gray-400 opacity-55'
@@ -81,7 +82,9 @@ const CircularLoadingBar = ({
 				/>
 			</svg>
 			<div className='absolute inset-0 flex items-center justify-center'>
-				<span className='!text-[.7rem] font-semibold'>{remaining}</span>
+				<span className='!text-[.8rem] font-semibold'>
+					{abbreviateNumber(remaining)}
+				</span>
 			</div>
 		</div>
 	);
@@ -139,7 +142,6 @@ export function Header({
 		'lastResetTime',
 		Date.now(),
 	);
-	const [rateLimitPercentage, setRateLimitPercentage] = useState(100);
 
 	// useEffect(() => {
 	// 	if (rateLimit) {
@@ -154,6 +156,8 @@ export function Header({
 	);
 
 	const [isRateLimitWarning, setIsRateLimitWarning] = useState(false);
+
+	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
 	const isCacheValid = (username: string) => {
 		const cachedData = localStorage.getItem(`userData_${username}`);
@@ -359,6 +363,16 @@ export function Header({
 		// setIsOverlayVisible(false);
 	};
 
+	const [windowWidth, setWindowWidth] = useState(
+		typeof window !== 'undefined' ? window.innerWidth : 0,
+	);
+
+	useEffect(() => {
+		const handleResize = () => setWindowWidth(window.innerWidth);
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
 	// handling screen resize for small screens
 	useEffect(() => {
 		setMounted(true);
@@ -409,14 +423,6 @@ export function Header({
 		window.location.reload();
 	};
 
-	// const getLowestRemainingRequests = () => {
-	// 	if (!detailedRateLimit) return 100;
-	// 	const remainingValues = Object.values(detailedRateLimit).map(
-	// 		(rl) => rl.remaining,
-	// 	);
-	// 	return Math.min(...remainingValues);
-	// };
-
 	const getRateLimitTooltipContent = () => {
 		if (!detailedRateLimit) return 'No rate limit data available';
 
@@ -460,8 +466,6 @@ export function Header({
 						lowestLimit.limit,
 					)}`}
 				>
-					{/* {lowestLimit.name}:{' '} */}
-					{/* {Math.round((lowestLimit.remaining / lowestLimit.limit) * 100)}% */}
 					{lowestLimit.remaining} requests remaining
 				</p>
 				<p className='text-xs text-muted-foreground mb-2'>
@@ -589,21 +593,34 @@ export function Header({
 						</span>
 					)}
 				</form>
-				<TooltipProvider>
-					<Tooltip>
-						<TooltipTrigger>
-							<CircularLoadingBar {...getLowestLimit()} />
-						</TooltipTrigger>
-						<TooltipContent>
-							{getRateLimitTooltipContent()}
-							{isRateLimitWarning && (
-								<p className='text-xs text-yellow-500 mt-2'>
-									Close to rate limit. Please wait before making more requests.
-								</p>
-							)}
-						</TooltipContent>
-					</Tooltip>
-				</TooltipProvider>
+				{(isSearchVisible || window.innerWidth >= 768) && (
+					<TooltipProvider>
+						<Tooltip open={isTooltipVisible}>
+							<TooltipTrigger asChild>
+								<div
+									onMouseEnter={() => setIsTooltipVisible(true)}
+									onMouseLeave={() => setIsTooltipVisible(false)}
+									onClick={() => setIsTooltipVisible(!isTooltipVisible)}
+								>
+									<CircularLoadingBar {...getLowestLimit()} />
+								</div>
+							</TooltipTrigger>
+							<TooltipContent
+								onMouseEnter={() => setIsTooltipVisible(true)}
+								onMouseLeave={() => setIsTooltipVisible(false)}
+								className='mt-0 md:-mt-1 md:mr-0 mr-14'
+							>
+								{getRateLimitTooltipContent()}
+								{isRateLimitWarning && (
+									<p className='text-xs text-yellow-500'>
+										Close to rate limit. Please wait before making more
+										requests.
+									</p>
+								)}
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				)}
 			</div>
 
 			{/* Search and Theme Toggle for small screen */}
