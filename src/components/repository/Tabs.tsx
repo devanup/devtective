@@ -94,7 +94,11 @@ export function RepoOverviewTab({
 								</SelectTrigger>
 								<SelectContent>
 									{filters.map((filter) => (
-										<SelectItem disabled value={filter.value}>
+										<SelectItem
+											key={filter.value}
+											disabled
+											value={filter.value}
+										>
 											{filter.label}
 										</SelectItem>
 									))}
