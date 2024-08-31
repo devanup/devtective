@@ -3,19 +3,12 @@ import { ParallaxScrollGrid } from './ParallaxGrid';
 
 interface RepositoriesTabProps {
 	repos: Repo[] | null;
-	onVisibleReposChange: (count: number) => void;
 }
 
-export function RepositoriesTab({
-	repos,
-	onVisibleReposChange,
-}: RepositoriesTabProps) {
+export function RepositoriesTab({ repos }: RepositoriesTabProps) {
 	return (
 		<>
-			<ParallaxScrollGrid
-				repos={repos || []}
-				onVisibleReposChange={onVisibleReposChange}
-			/>
+			<ParallaxScrollGrid repos={repos || []} />
 		</>
 	);
 }

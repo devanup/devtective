@@ -30,10 +30,11 @@ export const fetchRepos = async (
 	try {
 		const response: any = await octokit.graphql(
 			// repositories(first: $first, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}) {
+			// repositories(first: $first, ownerAffiliations: OWNER, orderBy: {field: PUSHED_AT, direction: DESC}) {
 			`
       query($username: String!, $first: Int!) {
         user(login: $username) {
-          repositories(first: $first, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}) {
+          repositories(first: $first, ownerAffiliations: OWNER) {
             nodes {
               name
               owner {

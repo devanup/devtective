@@ -14,7 +14,7 @@ const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 function UserDetailsContent({ userData }: { userData: any }) {
 	return (
 		<Card
-			className={`flex flex-col space-y-4 bg-gray-100 rounded-xl p-6 ${workSans.className}`}
+			className={`flex flex-col space-y-4 bg-gray-100 rounded-xl p-6 ${workSans.className} overflow-x-scroll`}
 		>
 			{/* Date joined */}
 			<div className='flex w-full items-center space-x-3'>

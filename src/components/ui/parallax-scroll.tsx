@@ -14,7 +14,6 @@ import { BiGitRepoForked } from 'react-icons/bi';
 interface ParallaxScrollProps {
 	repos: Repo[];
 	className?: string;
-	onVisibleReposChange: (count: number) => void;
 }
 
 const RepoCardSkeleton = () => (
@@ -51,7 +50,7 @@ const RepoCard = ({ repo }: { repo: Repo }) => (
 				{/* <span>{repo.language}</span> */}
 				{repo.primaryLanguage && <span>{repo.primaryLanguage.name}</span>}
 				<span>
-					{new Date(repo.updatedAt).toLocaleDateString('en-US', {
+					{new Date(repo.pushedAt).toLocaleDateString('en-US', {
 						month: 'long',
 						day: 'numeric',
 						year: 'numeric',
@@ -87,11 +86,7 @@ const RepoCard = ({ repo }: { repo: Repo }) => (
 	</Link>
 );
 
-export const ParallaxScroll = ({
-	repos,
-	className,
-	onVisibleReposChange,
-}: ParallaxScrollProps) => {
+export const ParallaxScroll = ({ repos, className }: ParallaxScrollProps) => {
 	const VISIBLE_REPOS = 10;
 	const gridRef = useRef<HTMLDivElement>(null);
 	const [showButton, setShowButton] = useState(false);
