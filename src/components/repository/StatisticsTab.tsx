@@ -33,7 +33,7 @@ function StatisticsTabContent({
 					const fetchedTopContributingRepos = await getTopContributingRepos(
 						userName,
 					);
-					if (fetchedTopContributingRepos.length > 0) {
+					if (fetchedTopContributingRepos.repoActivities.length > 0) {
 					} else {
 						console.log('No top contributing repos data fetched');
 					}
