@@ -123,7 +123,7 @@ export function RepoOverviewTab({
 				{/* Repositories tab */}
 				<TabsContent value='repositories'>
 					{/* Number of repos */}
-					<div className='relative text-muted-foreground flex items-center justify-start ml-4 md:ml-0 md:justify-center text-sm -mt-3 mb-0 bg-transparent pt-8 pb-6'>
+					<div className='relative text-muted-foreground flex md:flex-row flex-col items-center justify-start ml-4 md:ml-0 md:justify-center text-sm -mt-5 mb-0 bg-transparent pt-8 pb-6'>
 						{repoCount > 0 ? (
 							<h1>
 								Showing {displayCount}{' '}
@@ -134,7 +134,7 @@ export function RepoOverviewTab({
 								<h1>No repositories match the selected filter</h1>
 							</div>
 						)}
-						<div className='absolute right-4 md:right-10'>
+						<div className='md:absolute right-4 md:right-10 mt-5 md:mt-0'>
 							<Select onValueChange={(value) => setFilterValue(value)}>
 								<SelectTrigger className='w-[180px]'>
 									<SelectValue placeholder='Last Pushed' />
