@@ -37,16 +37,27 @@ const RepoCardSkeleton = () => (
 
 // Extracting RepoCard component
 const RepoCard = ({ repo }: { repo: Repo }) => (
-	<Link href={repo.html_url} target='_blank'>
+	<Link
+		href={`https://github.com/${repo.owner.login}/${repo.name}`}
+		target='_blank'
+	>
 		<Card className='w-full md:h-80 h-fit p-6 rounded-xl flex flex-col gap-3 relative overflow-hidden shadow-none border  bottom-0 transition-all ease-in-out duration-200 hover:bottom-1 hover:shadow-md'>
 			{/* Github icon background */}
 			<div className='absolute top-1/2 transform -translate-y-1/2 -right-52 opacity-[4%]'>
 				<SiGithub size={400} />
 			</div>
 			{/* Repo name, description, language */}
-			<span className='text-gray-500 dark:text-muted-foreground text-sm'>
-				{repo.language}
-			</span>
+			<div className='flex justify-between items-center text-gray-500 dark:text-muted-foreground text-sm'>
+				{/* <span>{repo.language}</span> */}
+				{repo.primaryLanguage && <span>{repo.primaryLanguage.name}</span>}
+				<span>
+					{new Date(repo.updatedAt).toLocaleDateString('en-US', {
+						month: 'long',
+						day: 'numeric',
+						year: 'numeric',
+					})}
+				</span>
+			</div>
 			<h1 className='font-bold text-2xl'>{repo.name}</h1>
 			<p className='text-sm text-gray-500 dark:text-muted-foreground my-3 flex-grow'>
 				{repo.description && repo.description.length > 350
@@ -59,16 +70,18 @@ const RepoCard = ({ repo }: { repo: Repo }) => (
 					{/* Stars */}
 					<div className='flex gap-1'>
 						<IoStar size={17} />
-						<span>{abbreviateNumber(repo.stargazers_count)}</span>
+						<span>{abbreviateNumber(repo.stargazerCount)}</span>
 					</div>
 					{/* Forks */}
 					<div className='flex gap-1'>
 						<BiGitRepoForked size={18} />
-						<span>{abbreviateNumber(repo.forks)}</span>
+						<span>{abbreviateNumber(repo.forkCount)}</span>
 					</div>
 				</div>
 				{/* Repo size */}
-				<div className='flex ml-auto'>{abbreviateNumber(repo.size)} KB</div>
+				<div className='flex ml-auto'>
+					{abbreviateNumber(repo.diskUsage)} KB
+				</div>
 			</div>
 		</Card>
 	</Link>
@@ -79,7 +92,7 @@ export const ParallaxScroll = ({
 	className,
 	onVisibleReposChange,
 }: ParallaxScrollProps) => {
-	const [visibleRepos, setVisibleRepos] = useState(10);
+	const VISIBLE_REPOS = 10;
 	const gridRef = useRef<HTMLDivElement>(null);
 	const [showButton, setShowButton] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +100,7 @@ export const ParallaxScroll = ({
 		// Simulate loading delay
 		const timer = setTimeout(() => {
 			setIsLoading(false);
-		}, 2000); // Adjust this value to control the loading duration
+		}, 0);
 
 		return () => clearTimeout(timer);
 	}, []);
@@ -110,19 +123,20 @@ export const ParallaxScroll = ({
 	const translateFirst = useTransform(scrollYProgress, [0, 1], [-150, -300]);
 	const translateSecond = useTransform(scrollYProgress, [0, 1], [-150, 200]);
 
-	const sortedRepos = [...repos].sort((a, b) => {
-		const dateA = new Date(a.pushed_at || a.updated_at);
-		const dateB = new Date(b.pushed_at || b.updated_at);
-		return dateB.getTime() - dateA.getTime();
-	});
+	// const sortedRepos = [...repos].sort((a, b) => {
+	// 	const dateA = new Date(a.updatedAt);
+	// 	const dateB = new Date(b.updatedAt);
+	// 	return dateB.getTime() - dateA.getTime();
+	// });
+	// Check if repos is an array and has items
+	const validRepos = Array.isArray(repos) ? repos : [];
+	const displayedRepos = validRepos.slice(0, VISIBLE_REPOS);
 
-	const displayedRepos = sortedRepos.slice(0, visibleRepos);
-
-	const handleShowMore = () => {
-		const newVisibleRepos = Math.min(visibleRepos + 6, repos.length);
-		setVisibleRepos(newVisibleRepos);
-		onVisibleReposChange(newVisibleRepos);
-	};
+	// const handleShowMore = () => {
+	// 	const newVisibleRepos = Math.min(visibleRepos + 6, repos.length);
+	// 	setVisibleRepos(newVisibleRepos);
+	// 	onVisibleReposChange(newVisibleRepos);
+	// };
 
 	const renderRepoList = (
 		repoList: Repo[],
@@ -144,7 +158,7 @@ export const ParallaxScroll = ({
 				  ))}
 		</div>
 	);
-
+	// console.log('repos=>', repos);
 	return (
 		<div
 			className={cn(

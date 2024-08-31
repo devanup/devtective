@@ -78,8 +78,9 @@ export function TotalContributed({ data }: TotalContributedProps) {
 				label: 'Total Contributions',
 				data: monthlyContributions.map((item) => item.contributions),
 				fill: true,
-				backgroundColor: 'rgba(54, 162, 235, .4)',
-				borderColor: 'rgba(54, 162, 235, .5)',
+				// backgroundColor: 'rgba(54, 162, 235, .4)',
+				backgroundColor: 'rgba(18, 147, 183, .4)',
+				borderColor: 'rgba(18, 147, 183, .5)',
 				borderWidth: 1,
 			},
 		],
@@ -118,6 +119,9 @@ export function TotalContributed({ data }: TotalContributedProps) {
 		hover: {
 			mode: 'index',
 			intersect: false,
+		},
+		animation: {
+			duration: 400,
 		},
 	};
 

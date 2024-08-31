@@ -4,8 +4,17 @@ import { TopContributingRepos } from './TopContributingRepos';
 import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
 import { Card, CardContent } from '@/components/ui/card';
 
+interface RepoActivity {
+	repo: string;
+	totalCommits: number;
+}
+
+interface TopContributingReposResult {
+	repoActivities: RepoActivity[];
+}
+
 export function TopContributingReposChart({ userName }: { userName: string }) {
-	const [data, setData] = useState<any[]>([]);
+	const [data, setData] = useState<TopContributingReposResult | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -16,10 +25,10 @@ export function TopContributingReposChart({ userName }: { userName: string }) {
 				try {
 					const fetchedData = await getTopContributingRepos(userName);
 					setData(fetchedData);
+					setIsLoading(false);
 				} catch (err) {
 					setError('Failed to fetch top contributing repos. Please try again.');
 					console.error(err);
-				} finally {
 					setIsLoading(false);
 				}
 			}
@@ -29,14 +38,16 @@ export function TopContributingReposChart({ userName }: { userName: string }) {
 
 	if (isLoading) return <TopContributingReposSkeleton />;
 	if (error) return <div className='text-red-500 text-center'>{error}</div>;
-	if (data.length === 0)
+	if (!data || data.repoActivities.length === 0)
 		return (
 			<div className='flex justify-center items-center text-muted-foreground h-full'>
 				No data available
 			</div>
 		);
 
-	return <TopContributingRepos data={data} userName={userName} />;
+	return (
+		<TopContributingRepos data={data.repoActivities} userName={userName} />
+	);
 }
 
 function TopContributingReposSkeleton() {

@@ -17,11 +17,13 @@ export function TopLanguagesChart({
 	const [error, setError] = useState<string | null>(null);
 
 	const formattedLanguages = useMemo(() => {
-		return languages.map((lang) => ({
-			label: lang.label,
-			value: lang.value,
-			color: lang.color,
-		}));
+		return Array.isArray(languages)
+			? languages.map((lang) => ({
+					label: lang.label,
+					value: lang.value,
+					color: lang.color,
+			  }))
+			: [];
 	}, [languages]);
 
 	useEffect(() => {

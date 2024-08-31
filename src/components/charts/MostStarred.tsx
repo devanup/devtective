@@ -54,6 +54,9 @@ export function MostStarred({ data, userName }: MostStarredProps) {
 				},
 			},
 		},
+		animation: {
+			duration: 400,
+		},
 		onClick: (event, elements) => {
 			if (elements.length > 0) {
 				const index = elements[0].index;
