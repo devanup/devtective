@@ -1,5 +1,5 @@
 import { Repo } from '@/types/repo';
-import { ParallaxScrollGrid } from './ParallaxGrid';
+import { ParallaxScroll } from '../ui/parallax-scroll';
 
 interface RepositoriesTabProps {
 	repos: Repo[] | null;
@@ -8,7 +8,7 @@ interface RepositoriesTabProps {
 export function RepositoriesTab({ repos }: RepositoriesTabProps) {
 	return (
 		<>
-			<ParallaxScrollGrid repos={repos || []} />
+			<ParallaxScroll repos={repos || []} />
 		</>
 	);
 }
