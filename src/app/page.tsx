@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, Suspense, cache } from 'react';
+import { useState, useEffect, cache } from 'react';
 
 import { UserData } from '@/types/user';
 import { extractFirstName } from '@/utils/nameUtils';
@@ -28,33 +28,6 @@ interface DetailedRateLimit {
 	topContributing: RateLimit;
 }
 
-const loadingStates = [
-	{
-		text: 'Buying a condo',
-	},
-	{
-		text: 'Travelling in a flight',
-	},
-	{
-		text: 'Meeting Tyler Durden',
-	},
-	{
-		text: 'He makes soap',
-	},
-	{
-		text: 'We goto a bar',
-	},
-	{
-		text: 'Start a fight',
-	},
-	{
-		text: 'We like it',
-	},
-	{
-		text: 'Welcome to F**** C***',
-	},
-];
-
 const LoadingOverlay = ({ message }: { message: string }) => {
 	return (
 		<div className='fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg overflow-hidden'>
@@ -73,7 +46,6 @@ export default function Home() {
 	const [languages, setLanguages] = useState<any[]>([]);
 	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
 	const [name, setName] = useState<string | null>(null);
-	const [rateLimit, setRateLimit] = useState<any>(null);
 
 	// Cache the fetchUser function
 	const cachedFetchUser = cache(fetchUser);
@@ -81,7 +53,7 @@ export default function Home() {
 	const cachedGetUserStats = cache(getUserStats);
 	const cachedGetTopContributingRepos = cache(getTopContributingRepos);
 
-	const initialUsers = ['leerob'];
+	const initialUsers = ['sarahdayan'];
 	const [searchedUser, setSearchedUser] = useState<string>(() => {
 		return initialUsers[Math.floor(Math.random() * initialUsers.length)];
 	});
@@ -127,6 +99,7 @@ export default function Home() {
 
 				setUserData(userDataResponse.user);
 				setRepos(reposResponse.repos);
+				// console.log('Number of repos => ', reposResponse.repos.length);
 				setLanguages(languagesResponse.stats);
 				setTopContributingRepos(topContributingReposResponse.repoActivities);
 
@@ -137,16 +110,14 @@ export default function Home() {
 					topContributing: topContributingReposResponse.rateLimit,
 				});
 
-				// Log the aggregatedRateLimit
-				// console.log('Aggregated Rate Limit:', rateLimit);
-				console.log('detailedRateLimit=> ', detailedRateLimit);
-				console.log('userData rateLimit=> ', userDataResponse.rateLimit);
-				console.log('repos rateLimit=> ', reposResponse.rateLimit);
-				console.log('languages rateLimit=> ', languagesResponse.rateLimit);
-				console.log(
-					'topContributingRepos rateLimit=> ',
-					topContributingReposResponse.rateLimit,
-				);
+				// console.log('detailedRateLimit=> ', detailedRateLimit);
+				// console.log('userData rateLimit=> ', userDataResponse.rateLimit);
+				// console.log('repos rateLimit=> ', reposResponse.rateLimit);
+				// console.log('languages rateLimit=> ', languagesResponse.rateLimit);
+				// console.log(
+				// 	'topContributingRepos rateLimit=> ',
+				// 	topContributingReposResponse.rateLimit,
+				// );
 
 				// Extract first name from userData.name
 				const firstName = extractFirstName(userDataResponse.user?.name);

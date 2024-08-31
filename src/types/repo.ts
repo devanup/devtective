@@ -8,6 +8,7 @@ type Repo = {
 	forkCount: number;
 	diskUsage: number;
 	updatedAt: string;
+	pushedAt: string;
 	url: string;
 	primaryLanguage: {
 		name: string;
