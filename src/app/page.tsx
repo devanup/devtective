@@ -12,7 +12,6 @@ import { fetchUser } from '@/lib/fetchUser';
 import { fetchRepos } from '@/lib/fetchRepos';
 import { getUserStats } from '@/lib/getLangData';
 import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
-// import { fetchRepoStats } from '@/lib/fetchRepoStats';
 
 interface RateLimit {
 	limit: number;
@@ -53,7 +52,7 @@ export default function Home() {
 	const cachedGetUserStats = cache(getUserStats);
 	const cachedGetTopContributingRepos = cache(getTopContributingRepos);
 
-	const initialUsers = ['sarahdayan'];
+	const initialUsers = ['leerob', 'karpathy'];
 	const [searchedUser, setSearchedUser] = useState<string>(() => {
 		return initialUsers[Math.floor(Math.random() * initialUsers.length)];
 	});
@@ -65,22 +64,10 @@ export default function Home() {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			// if (rateLimit && rateLimit.remaining > 0) {
 			setIsLoading(true);
 			setLoadingMessage('Initiating search...');
 
 			try {
-				// const [
-				// 	userDataResponse,
-				// 	reposResponse,
-				// 	languagesResponse,
-				// 	topContributingReposResponse,
-				// ] = await Promise.all([
-				// 	cachedFetchUser(searchedUser),
-				// 	cachedFetchRepos(searchedUser),
-				// 	cachedGetUserStats(searchedUser),
-				// 	cachedGetTopContributingRepos(searchedUser),
-				// ]);
 				setLoadingMessage('Loading user data...');
 				const userDataResponse = await cachedFetchUser(searchedUser);
 				// await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between messages
