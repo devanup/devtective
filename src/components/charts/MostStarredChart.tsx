@@ -16,7 +16,7 @@ export function MostStarredChart({ userName }: { userName: string }) {
 			if (userName && userName !== 'User') {
 				setIsLoading(true);
 				try {
-					const ownedRepos = await fetchRepos(userName, 5);
+					const ownedRepos = await fetchRepos(userName);
 					// const ownedRepos = allRepos.filter(
 					// 	(repo: Repo) => repo.owner.login === userName,
 					// );
