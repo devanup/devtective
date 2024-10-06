@@ -224,7 +224,7 @@ export function Header({
 
 		setIsRateLimitWarning(false);
 		setIsLoading(true);
-		setStatusMessage('0% Initiating search...');
+		setStatusMessage('Initiating search...');
 
 		try {
 			const updateStatus = async (message: string) => {
@@ -232,7 +232,7 @@ export function Header({
 				await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 500ms
 			};
 
-			await updateStatus('17% Fetching user data...');
+			await updateStatus('Fetching user data...');
 
 			const userData = await fetchUser(username);
 
@@ -257,7 +257,7 @@ export function Header({
 				return;
 			}
 
-			await updateStatus('33% Fetching repositories...');
+			await updateStatus('Fetching repositories...');
 			const repos = await fetchRepos(username);
 			if (repos.repos.length === 0) {
 				toast({
@@ -270,15 +270,15 @@ export function Header({
 				return;
 			}
 
-			await updateStatus('50% Fetching top contributing repositories...');
+			await updateStatus('Fetching top contributing repositories...');
 			// console.log('Fetching top contributing repositories...');
 			const topContributingRepos = await getTopContributingRepos(username);
 
-			await updateStatus('67% Fetching user statistics...');
+			await updateStatus('Fetching user statistics...');
 			// console.log('Fetching user statistics...');
 			const userStats = await getUserStats(username);
 
-			await updateStatus('83% Setting user data...');
+			await updateStatus('Setting user data...');
 			// console.log('Setting user data...');
 			setUserData(userData);
 			setRepos(repos);
@@ -289,7 +289,7 @@ export function Header({
 			setSearchedUser(username);
 			setLastSearchedUser(username);
 
-			await updateStatus('100% Data fetching complete!');
+			await updateStatus('Data fetching complete!');
 			// console.log('Data fetching complete!');
 
 			// Hide search overlay after successful search
