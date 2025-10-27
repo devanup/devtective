@@ -2,10 +2,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { TopLanguages } from './TopLanguages';
 import { Card, CardContent } from '@/components/ui/card';
-import { Language } from '@/types/repo';
+import { UserStats } from '@/types/user';
+import { convertUserStatsToLanguages } from '@/utils/languageUtils';
 
 interface TopLanguagesChartProps {
-	languages: Language[];
+	languages: UserStats | null;
 	userName: string;
 }
 
@@ -17,14 +18,8 @@ export function TopLanguagesChart({
 	const [error, setError] = useState<string | null>(null);
 
 	const formattedLanguages = useMemo(() => {
-		return Array.isArray(languages)
-			? languages.map((lang) => ({
-					label: lang.label,
-					value: lang.value,
-					color: lang.color,
-			  }))
-			: [];
-	}, [languages]);
+		return convertUserStatsToLanguages(languages, userName);
+	}, [languages, userName]);
 
 	useEffect(() => {
 		setIsLoading(true);
