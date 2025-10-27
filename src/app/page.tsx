@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect, cache } from 'react';
+import { useState, useEffect } from 'react';
 
-import { UserData } from '@/types/user';
+import { UserData, DetailedRateLimit, UserStats } from '@/types/user';
+import { Repo, TopContributingRepo } from '@/types/repo';
 import { extractFirstName } from '@/utils/nameUtils';
 
 import { Header } from '../components/Header';
@@ -12,20 +13,6 @@ import { fetchUser } from '@/lib/fetchUser';
 import { fetchRepos } from '@/lib/fetchRepos';
 import { getUserStats } from '@/lib/getLangData';
 import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
-
-interface RateLimit {
-	limit: number;
-	remaining: number;
-	used: number;
-	reset: number;
-}
-
-interface DetailedRateLimit {
-	user: RateLimit;
-	repos: RateLimit;
-	languages: RateLimit;
-	topContributing: RateLimit;
-}
 
 const LoadingOverlay = ({ message }: { message: string }) => {
 	return (
@@ -41,16 +28,10 @@ const LoadingOverlay = ({ message }: { message: string }) => {
 
 export default function Home() {
 	const [userData, setUserData] = useState<UserData | null>(null);
-	const [repos, setRepos] = useState<any[]>([]);
-	const [languages, setLanguages] = useState<any[]>([]);
-	const [topContributingRepos, setTopContributingRepos] = useState<any[]>([]);
+	const [repos, setRepos] = useState<Repo[]>([]);
+	const [languages, setLanguages] = useState<UserStats | null>(null);
+	const [topContributingRepos, setTopContributingRepos] = useState<TopContributingRepo[]>([]);
 	const [name, setName] = useState<string | null>(null);
-
-	// Cache the fetchUser function
-	const cachedFetchUser = cache(fetchUser);
-	const cachedFetchRepos = cache(fetchRepos);
-	const cachedGetUserStats = cache(getUserStats);
-	const cachedGetTopContributingRepos = cache(getTopContributingRepos);
 
 	const initialUsers = ['leerob', 'karpathy'];
 	const [searchedUser, setSearchedUser] = useState<string>(() => {
@@ -69,17 +50,17 @@ export default function Home() {
 
 			try {
 				setLoadingMessage('Loading user data...');
-				const userDataResponse = await cachedFetchUser(searchedUser);
+				const userDataResponse = await fetchUser(searchedUser);
 
 				setLoadingMessage('Loading repositories...');
-				const reposResponse = await cachedFetchRepos(searchedUser);
+				const reposResponse = await fetchRepos(searchedUser);
 
 				setLoadingMessage('Loading language statistics...');
-				const languagesResponse = await cachedGetUserStats(searchedUser);
+				const languagesResponse = await getUserStats(searchedUser);
 
 				setLoadingMessage('Loading top contributing repositories...');
 				const topContributingReposResponse =
-					await cachedGetTopContributingRepos(searchedUser);
+					await getTopContributingRepos(searchedUser);
 
 				setUserData(userDataResponse.user);
 				setRepos(reposResponse.repos);
@@ -93,23 +74,14 @@ export default function Home() {
 					topContributing: topContributingReposResponse.rateLimit,
 				});
 
-				// console.log('detailedRateLimit=> ', detailedRateLimit);
-				// console.log('userData rateLimit=> ', userDataResponse.rateLimit);
-				// console.log('repos rateLimit=> ', reposResponse.rateLimit);
-				// console.log('languages rateLimit=> ', languagesResponse.rateLimit);
-				// console.log(
-				// 	'topContributingRepos rateLimit=> ',
-				// 	topContributingReposResponse.rateLimit,
-				// );
-
 				// Extract first name from userData.name
 				const firstName = extractFirstName(userDataResponse.user?.name);
 				setName(firstName);
-				setLoadingMessage(''); // Clear the loading message
-			} catch (error) {
-				console.error('Error fetching data:', error);
 				setLoadingMessage('');
-				alert('You have reached the rate limit. Please try again later.');
+			} catch (error) {
+				setLoadingMessage('');
+				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+				alert(`Failed to fetch data: ${errorMessage}`);
 			} finally {
 				setLoadingMessage('');
 				setIsLoading(false);

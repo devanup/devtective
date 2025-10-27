@@ -28,7 +28,6 @@ export function TopContributingReposChart({ userName }: { userName: string }) {
 					setIsLoading(false);
 				} catch (err) {
 					setError('Failed to fetch top contributing repos. Please try again.');
-					console.error(err);
 					setIsLoading(false);
 				}
 			}

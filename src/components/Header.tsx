@@ -143,14 +143,6 @@ export function Header({
 		Date.now(),
 	);
 
-	// useEffect(() => {
-	// 	if (rateLimit) {
-	// 		const usage = Math.round((rateLimit.remaining / rateLimit.limit) * 100);
-	// 		setApiUsage(usage);
-	// 	}
-	// 	console.log('rateLimit(HEADER)=> ', rateLimit);
-	// 	console.log('apiUsage(HEADER)=> ', apiUsage);
-	// }, [rateLimit]);
 	const [lastSearchedUser, setLastSearchedUser] = useState<string | null>(
 		initialUsers[0],
 	);
@@ -271,15 +263,12 @@ export function Header({
 			}
 
 			await updateStatus('Fetching top contributing repositories...');
-			// console.log('Fetching top contributing repositories...');
 			const topContributingRepos = await getTopContributingRepos(username);
 
 			await updateStatus('Fetching user statistics...');
-			// console.log('Fetching user statistics...');
 			const userStats = await getUserStats(username);
 
 			await updateStatus('Setting user data...');
-			// console.log('Setting user data...');
 			setUserData(userData);
 			setRepos(repos);
 			setLanguages(userStats);
@@ -289,14 +278,9 @@ export function Header({
 			setSearchedUser(username);
 			setLastSearchedUser(username);
 
-			await updateStatus('Data fetching complete!');
-			// console.log('Data fetching complete!');
-
-			// Hide search overlay after successful search
-			// hideSearch();
+		await updateStatus('Data fetching complete!');
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log('error(HEADER)=> ', error);
 				if (error.message.includes('rate limit')) {
 					if (error.message.includes('secondary rate limit')) {
 						toast({
@@ -319,7 +303,6 @@ export function Header({
 						description: 'Please check the username and try again.',
 					});
 				} else {
-					console.error('An unexpected error occurred:', error);
 					toast({
 						variant: 'destructive',
 						title: 'Error',
@@ -327,7 +310,6 @@ export function Header({
 					});
 				}
 			} else {
-				console.error('An unexpected error occurred:', error);
 				toast({
 					variant: 'destructive',
 					title: 'Error',

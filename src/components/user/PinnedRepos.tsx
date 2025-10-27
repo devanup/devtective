@@ -20,7 +20,7 @@ const gabarito = Gabarito({
 
 const MAX_LANGUAGE_CHARACTERS = 25; // Adjust this value based on UI requirements
 
-function PinnedReposContent({ userData }: { userData: any }) {
+function PinnedReposContent({ userData }: { userData: import('@/types/user').UserData }) {
 	const [pinnedRepos, setPinnedRepos] = useState<IPinnedRepo[] | null>(null);
 	const { theme, systemTheme } = useTheme();
 	const [gradientOpacity, setGradientOpacity] = useState(0.5);
@@ -118,7 +118,7 @@ function PinnedReposContent({ userData }: { userData: any }) {
 	);
 }
 
-export function PinnedRepos({ userData }: { userData: any }) {
+export function PinnedRepos({ userData }: { userData: import('@/types/user').UserData }) {
 	return (
 		<Suspense fallback={<PinnedReposSkeleton />}>
 			{userData ? (
