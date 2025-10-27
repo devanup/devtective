@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/core';
-import GhPolyglot from 'gh-polyglot';
 import { UserStats, RateLimit } from '@/types/user';
 
 const octokit = new Octokit({
@@ -8,7 +7,10 @@ const octokit = new Octokit({
 });
 
 // In-memory cache
-const cache = new Map<string, { data: { stats: UserStats; rateLimit: RateLimit }; expiration: number }>();
+const cache = new Map<
+	string,
+	{ data: { stats: UserStats; rateLimit: RateLimit }; expiration: number }
+>();
 
 export async function GET(request: NextRequest) {
 	const searchParams = request.nextUrl.searchParams;
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest) {
 	if (!username) {
 		return NextResponse.json(
 			{ error: 'Username is required' },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 
@@ -30,25 +32,86 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		// Fetch stats using gh-polyglot
-		const stats: UserStats = await new Promise((resolve, reject) => {
-			const me = new GhPolyglot(username);
-			me.userStats((err: Error | null, stats: UserStats) => {
-				if (err) {
-					reject(err);
+		// Fetch user's repositories using GraphQL
+		const response = await octokit.graphql<{
+			user: {
+				repositories: {
+					nodes: Array<{
+						name: string;
+						languages: {
+							edges: Array<{
+								size: number;
+								node: {
+									name: string;
+								};
+							}>;
+						};
+					}>;
+				};
+			};
+			rateLimit: {
+				limit: number;
+				remaining: number;
+				used: number;
+				resetAt: string;
+			};
+		}>(
+			`
+			query($username: String!, $first: Int!) {
+				user(login: $username) {
+					repositories(first: $first, ownerAffiliations: OWNER) {
+						nodes {
+							name
+							languages(first: 10) {
+								edges {
+									size
+									node {
+										name
+									}
+								}
+							}
+						}
+					}
+				}
+				rateLimit {
+					limit
+					remaining
+					used
+					resetAt
+				}
+			}
+		`,
+			{
+				username: username,
+				first: 100,
+			},
+		);
+
+		// Calculate language statistics
+		const languageStats: { [language: string]: number } = {};
+
+		response.user.repositories.nodes.forEach((repo) => {
+			repo.languages.edges.forEach((edge) => {
+				const langName = edge.node.name;
+				const langSize = edge.size;
+				if (languageStats[langName]) {
+					languageStats[langName] += langSize;
 				} else {
-					resolve(stats);
+					languageStats[langName] = langSize;
 				}
 			});
 		});
 
-		// Fetch rate limit information
-		const { data: rateLimitData } = await octokit.request('GET /rate_limit');
+		// Convert to the expected format
+		const stats: UserStats = {
+			[username]: languageStats,
+		};
+
 		const rateLimit: RateLimit = {
-			limit: rateLimitData.resources.core.limit,
-			remaining: rateLimitData.resources.core.remaining,
-			used: rateLimitData.resources.core.used,
-			reset: rateLimitData.resources.core.reset,
+			limit: response.rateLimit.limit,
+			remaining: response.rateLimit.remaining,
+			used: response.rateLimit.used,
+			reset: new Date(response.rateLimit.resetAt).getTime() / 1000,
 		};
 
 		const dataToCache = { stats, rateLimit };
@@ -61,9 +124,13 @@ export async function GET(request: NextRequest) {
 
 		return NextResponse.json(dataToCache);
 	} catch (error) {
+		console.error('User stats API error:', error);
 		return NextResponse.json(
-			{ error: 'An error occurred while fetching user stats' },
-			{ status: 500 }
+			{
+				error: 'An error occurred while fetching user stats',
+				details: error instanceof Error ? error.message : 'Unknown error',
+			},
+			{ status: 500 },
 		);
 	}
 }

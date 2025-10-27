@@ -10,7 +10,7 @@ const octokit = new Octokit({
 
 export const fetchContributorActivity = async (
 	owner: string,
-	repo: string
+	repo: string,
 ): Promise<ContributorActivity[]> => {
 	try {
 		const { data } = await octokit.request(
@@ -31,7 +31,10 @@ export const fetchContributorActivity = async (
 
 export const fetchRepoStats = async (username: string, repoName: string) => {
 	return new Promise((resolve, reject) => {
-		const repo = new GhPolyglot(`${username}/${repoName}`);
+		const repo = new GhPolyglot(
+			`${username}/${repoName}`,
+			process.env.GITHUB_TOKEN,
+		);
 		repo.repoStats((err, stats) => {
 			if (err) {
 				reject(err);
