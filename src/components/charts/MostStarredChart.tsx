@@ -17,15 +17,11 @@ export function MostStarredChart({ userName }: { userName: string }) {
 				setIsLoading(true);
 				try {
 					const ownedRepos = await fetchRepos(userName);
-					// const ownedRepos = allRepos.filter(
-					// 	(repo: Repo) => repo.owner.login === userName,
-					// );
 					const mostStarredData = getMostStarredRepos(ownedRepos.repos);
 					setData(mostStarredData);
 					setIsLoading(false);
 				} catch (err) {
 					setError('Failed to fetch most starred repos. Please try again.');
-					console.error(err);
 				}
 			}
 		}

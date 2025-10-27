@@ -2,35 +2,25 @@
 
 import { fetchRepos } from './fetchRepos';
 import { fetchContributorActivity } from './fetchRepoStats';
+import { MonthlyContribution, ContributorActivity } from '@/types/repo';
 
 interface Repo {
 	name: string;
 	owner: { login: string };
-	fork: boolean;
-}
-
-interface MonthlyContribution {
-	month: string;
-	contributions: number;
 }
 
 export const getTotalContributions = async (
 	username: string,
 ): Promise<MonthlyContribution[]> => {
-	console.log(`Fetching contributions for ${username}`);
-
 	const repos = await fetchRepos(username);
-	console.log(`Fetched ${repos.repos.length} repos`);
 
 	// Filter repos that the user doesn't own
 	const contributedRepos = repos.repos.filter(
 		(repo: Repo) => repo.owner.login !== username,
 	);
-	console.log(`Found ${contributedRepos.length} contributed repos`);
 
 	const repoActivities = await Promise.all(
 		contributedRepos.map(async (repo: Repo) => {
-			console.log(`Fetching activity for ${repo.name}`);
 			const activity = await fetchContributorActivity(username, repo.name);
 			return calculateUserContributions(username, activity);
 		}),
@@ -38,17 +28,15 @@ export const getTotalContributions = async (
 
 	// Combine all contributions
 	const combinedContributions = combineContributions(repoActivities);
-	console.log(`Combined contributions:`, combinedContributions);
 
 	// Sort by date and take the last 12 months
 	const result = sortAndLimitContributions(combinedContributions);
-	console.log(`Final result:`, result);
 	return result;
 };
 
 function calculateUserContributions(
 	username: string,
-	activity: any[],
+	activity: ContributorActivity[],
 ): MonthlyContribution[] {
 	if (!Array.isArray(activity)) return [];
 
@@ -59,7 +47,7 @@ function calculateUserContributions(
 
 	const monthlyContributions: { [key: string]: number } = {};
 
-	userActivity.weeks.forEach((week: any) => {
+	userActivity.weeks.forEach((week) => {
 		const date = new Date(week.w * 1000); // Convert Unix timestamp to Date
 		const monthKey = `${date.getFullYear()}-${String(
 			date.getMonth() + 1,

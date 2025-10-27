@@ -4,6 +4,7 @@ import './globals.css';
 import GridBackGround from '../components/common/GridBackGround';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '../components/theme-provider';
+import ErrorBoundary from '../components/ErrorBoundary';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -22,11 +23,13 @@ export default function RootLayout({
 			<body
 				className={`${inter.className} transition-all ease-in-out duration-300`}
 			>
-				<ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-					<GridBackGround />
-					{children}
-				</ThemeProvider>
-				<Toaster />
+				<ErrorBoundary>
+					<ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+						<GridBackGround />
+						{children}
+					</ThemeProvider>
+					<Toaster />
+				</ErrorBoundary>
 			</body>
 		</html>
 	);

@@ -30,15 +30,9 @@ function StatisticsTabContent({
 		const fetchTopContributingRepos = async () => {
 			if (userName && userName !== 'User') {
 				try {
-					const fetchedTopContributingRepos = await getTopContributingRepos(
-						userName,
-					);
-					if (fetchedTopContributingRepos.repoActivities.length > 0) {
-					} else {
-						console.log('No top contributing repos data fetched');
-					}
+					await getTopContributingRepos(userName);
 				} catch (error) {
-					console.error('Error fetching top contributing repos:', error);
+					// Error is handled by the component
 				}
 			}
 		};

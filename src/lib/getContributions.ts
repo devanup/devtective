@@ -3,7 +3,7 @@
 import { Octokit } from '@octokit/core';
 
 const octokit = new Octokit({
-	auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN,
+	auth: process.env.GITHUB_TOKEN,
 });
 
 interface ContributionDay {
@@ -105,7 +105,6 @@ export const getContributions = async (
 			rateLimit: response.rateLimit,
 		};
 	} catch (error) {
-		console.error('Error fetching contribution data:', error);
 		throw error;
 	}
 };

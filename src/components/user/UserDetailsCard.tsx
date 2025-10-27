@@ -8,10 +8,11 @@ import { LuLink2 } from 'react-icons/lu';
 import { BsCalendar } from 'react-icons/bs';
 import { UserDetailsSkeleton } from '../skeletons/UserDetailsSkeleton';
 import { Suspense } from 'react';
+import { UserData } from '@/types/user';
 
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 
-function UserDetailsContent({ userData }: { userData: any }) {
+function UserDetailsContent({ userData }: { userData: UserData }) {
 	return (
 		<Card
 			className={`flex flex-col space-y-4 bg-gray-100 rounded-xl p-6 ${workSans.className} overflow-x-scroll`}
@@ -101,7 +102,7 @@ function UserDetailsContent({ userData }: { userData: any }) {
 	);
 }
 
-export function UserDetailsCard({ userData }: { userData: any | null }) {
+export function UserDetailsCard({ userData }: { userData: UserData | null }) {
 	return (
 		<Suspense fallback={<UserDetailsSkeleton />}>
 			{userData ? (

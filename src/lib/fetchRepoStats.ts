@@ -1,13 +1,17 @@
-// 'use server';
+'use server';
 
 import GhPolyglot from 'gh-polyglot';
 import { Octokit } from '@octokit/core';
+import { ContributorActivity } from '@/types/repo';
 
 const octokit = new Octokit({
-	auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN,
+	auth: process.env.GITHUB_TOKEN,
 });
 
-export const fetchContributorActivity = async (owner: string, repo: string) => {
+export const fetchContributorActivity = async (
+	owner: string,
+	repo: string
+): Promise<ContributorActivity[]> => {
 	try {
 		const { data } = await octokit.request(
 			'GET /repos/{owner}/{repo}/stats/contributors',
@@ -21,7 +25,6 @@ export const fetchContributorActivity = async (owner: string, repo: string) => {
 		);
 		return Array.isArray(data) ? data : [];
 	} catch (error) {
-		console.error('Error fetching contributor activity:', error);
 		return [];
 	}
 };
