@@ -9,7 +9,6 @@ interface ProfileOverviewProps {
 }
 
 export default function ProfileOverView({ userData }: ProfileOverviewProps) {
-	/*
 	if (!userData) {
 		return (
 			<div className='w-3/6 text-muted-foreground flex justify-center text-lg'>
@@ -17,7 +16,7 @@ export default function ProfileOverView({ userData }: ProfileOverviewProps) {
 			</div>
 		);
 	}
-		*/
+
 	return (
 		<main className='flex flex-col space-y-6'>
 			<UserCard userData={userData} />

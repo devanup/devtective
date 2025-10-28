@@ -1,11 +1,12 @@
 import { RepoOverviewTab } from './repository/Tabs';
 
-import { Repo, Language, TopContributingRepo } from '@/types/repo';
+import { Repo, TopContributingRepo } from '@/types/repo';
+import { UserStats } from '@/types/user';
 
 interface RepoOverviewProps {
 	repos: Repo[] | null;
 	topContributingRepos: TopContributingRepo[] | null;
-	languages: Language[] | null;
+	languages: UserStats | null;
 	name: string | null;
 	userName: string;
 }
@@ -21,7 +22,7 @@ export default function RepoOverview({
 		<main className='flex flex-col items-center space-y-6 w-full overflow-scroll '>
 			<RepoOverviewTab
 				repos={repos ?? []}
-				languages={languages ?? []}
+				languages={languages}
 				topContributingRepos={topContributingRepos ?? []}
 				name={name}
 				userName={userName}

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/core';
 import { UserStats, RateLimit } from '@/types/user';
+import { env } from '@/config/env';
 
 const octokit = new Octokit({
-	auth: process.env.GITHUB_TOKEN,
+	auth: env.GITHUB_TOKEN,
 });
 
 // In-memory cache
@@ -124,7 +125,6 @@ export async function GET(request: NextRequest) {
 
 		return NextResponse.json(dataToCache);
 	} catch (error) {
-		console.error('User stats API error:', error);
 		return NextResponse.json(
 			{
 				error: 'An error occurred while fetching user stats',

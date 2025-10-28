@@ -8,7 +8,10 @@ import { useEffect, useState } from 'react';
 interface TopContributingReposProps {
 	data: {
 		repo: string;
+		owner: string;
 		totalCommits: number;
+		userCommits?: number;
+		isOwnedByUser?: boolean;
 	}[];
 	userName: string;
 }
@@ -55,9 +58,39 @@ export function TopContributingRepos({
 	const options: ChartOptions<'bar'> = {
 		indexAxis: 'y', // Makes the chart horizontal
 		maintainAspectRatio: false,
+		interaction: {
+			mode: 'index',
+			intersect: false,
+			axis: 'y',
+		},
 		plugins: {
 			legend: {
 				display: false,
+			},
+			tooltip: {
+				callbacks: {
+					title: (tooltipItems) => {
+						const index = tooltipItems[0].dataIndex;
+						return data[index].repo;
+					},
+					label: (context) => {
+						const index = context.dataIndex;
+						const repo = data[index];
+						const lines = [];
+
+						// Always show total commits
+						lines.push(`Total Commits: ${repo.totalCommits.toLocaleString()}`);
+
+						// Always show user's individual commit count if available
+						if (repo.userCommits !== undefined) {
+							// Capitalize first letter of username for display
+							const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
+							lines.push(`${displayName}'s Commits: ${repo.userCommits.toLocaleString()}`);
+						}
+
+						return lines;
+					},
+				},
 			},
 		},
 		scales: {
@@ -85,9 +118,9 @@ export function TopContributingRepos({
 		onClick: (event, elements) => {
 			if (elements.length > 0) {
 				const index = elements[0].index;
-				const repoName = data[index].repo;
-				// Assuming all repos belong to 'leerob' GitHub account
-				const url = `https://github.com/${userName}/${repoName}`;
+				const repo = data[index];
+				// Use the actual owner from the data
+				const url = `https://github.com/${repo.owner}/${repo.repo}`;
 				window.open(url, '_blank', 'noopener,noreferrer');
 			}
 		},

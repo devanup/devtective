@@ -31,7 +31,18 @@ import { abbreviateNumber } from 'js-abbreviation-number';
 const workSans = Work_Sans({ weight: '400', subsets: ['latin'] });
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 
-const searchSchema = z.string().min(1, { message: 'Enter a valid username' });
+// GitHub username validation rules:
+// - Must be 1-39 characters
+// - Can only contain alphanumeric characters and hyphens
+// - Cannot start or end with a hyphen
+const searchSchema = z
+	.string()
+	.min(1, { message: 'Username is required' })
+	.max(39, { message: 'Username cannot exceed 39 characters' })
+	.regex(
+		/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/,
+		{ message: 'Username can only contain alphanumeric characters and hyphens, and cannot start or end with a hyphen' }
+	);
 
 const CircularLoadingBar = ({
 	remaining,

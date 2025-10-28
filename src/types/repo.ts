@@ -43,7 +43,10 @@ export interface Language {
 
 export interface TopContributingRepo {
 	repo: string;
+	owner: string; // Repository owner's username
 	totalCommits: number;
+	userCommits?: number; // User's commits (only for repos they don't own)
+	isOwnedByUser?: boolean; // Whether this repo belongs to the user
 }
 
 export interface ReposResponse {
