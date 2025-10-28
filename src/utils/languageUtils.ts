@@ -1,6 +1,35 @@
 import { UserStats } from '@/types/user';
 import { Language } from '@/types/repo';
 
+// Distinct color palette for languages (similar to Most Starred chart)
+// These are visually distinct colors that work well together
+const DISTINCT_COLORS = [
+	'rgba(255, 99, 132, 0.7)', // Pink/Red
+	'rgba(54, 162, 235, 0.7)', // Blue
+	'rgba(255, 206, 86, 0.7)', // Yellow
+	'rgba(75, 192, 192, 0.7)', // Teal/Cyan
+	'rgba(153, 102, 255, 0.7)', // Purple
+	'rgba(255, 159, 64, 0.7)', // Orange
+	'rgba(231, 76, 60, 0.7)', // Red
+	'rgba(46, 204, 113, 0.7)', // Green
+	'rgba(52, 152, 219, 0.7)', // Light Blue
+	'rgba(155, 89, 182, 0.7)', // Violet
+	'rgba(241, 196, 15, 0.7)', // Amber
+	'rgba(26, 188, 156, 0.7)', // Turquoise
+	'rgba(230, 126, 34, 0.7)', // Carrot Orange
+	'rgba(52, 73, 94, 0.7)', // Dark Blue Gray
+	'rgba(192, 57, 43, 0.7)', // Dark Red
+];
+
+// Convert hex colors to rgba format for consistency
+function hexToRgba(hex: string, alpha = 0.7): string {
+	const cleanHex = hex.replace('#', '');
+	const r = parseInt(cleanHex.substring(0, 2), 16);
+	const g = parseInt(cleanHex.substring(2, 4), 16);
+	const b = parseInt(cleanHex.substring(4, 6), 16);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 // GitHub language colors mapping
 const LANGUAGE_COLORS: { [key: string]: string } = {
 	JavaScript: '#f7df1e',
@@ -172,15 +201,25 @@ export function convertUserStatsToLanguages(
 		0,
 	);
 
-	// Convert to Language array format
+	// Convert to Language array format and filter out languages with 0%
 	const languages: Language[] = Object.entries(languageStats)
-		.map(([name, bytes]) => ({
-			label: name,
-			value: Math.round((bytes / totalBytes) * 100), // Convert to percentage
-			color: LANGUAGE_COLORS[name] || '#808080', // Default gray for unknown languages
-		}))
+		.map(([name, bytes]) => {
+			const percentage = Math.round((bytes / totalBytes) * 100);
+			return {
+				label: name,
+				value: percentage,
+				// Color will be assigned from a distinct palette below to ensure uniqueness
+				color: '',
+			};
+		})
+		.filter((lang) => lang.value > 0) // OPTIMIZATION: Filter out languages with 0%
 		.sort((a, b) => b.value - a.value) // Sort by percentage descending
 		.slice(0, 10); // Take top 10 languages
+
+	// Assign distinct colors from our palette (guarantees unique, vibrant colors)
+	languages.forEach((lang, index) => {
+		lang.color = DISTINCT_COLORS[index % DISTINCT_COLORS.length];
+	});
 
 	// If there are more than 10 languages, group the rest as "Others"
 	if (Object.keys(languageStats).length > 10) {
@@ -192,7 +231,7 @@ export function convertUserStatsToLanguages(
 			languages.push({
 				label: 'Others',
 				value: othersPercentage,
-				color: '#808080',
+				color: 'rgba(128, 128, 128, 0.7)', // Gray for "Others"
 			});
 		}
 	}

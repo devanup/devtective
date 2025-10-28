@@ -105,10 +105,10 @@ export async function GET(request: NextRequest) {
 			rateLimit,
 		};
 
-		// Store in cache with 2-hour expiration
+		// OPTIMIZATION: Extended cache to 4 hours to reduce API calls
 		cache.set(cacheKey, {
 			data: dataToCache,
-			expiration: Date.now() + 7200000, // 2 hours
+			expiration: Date.now() + 14400000, // 4 hours (14400000ms)
 		});
 
 		return NextResponse.json(dataToCache);

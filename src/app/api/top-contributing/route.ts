@@ -67,13 +67,49 @@ export async function GET(request: NextRequest) {
 			};
 		};
 
-		// Fetch ALL user's repositories using GraphQL with pagination
+		// Define GraphQL response type with additional fields for optimization
+		type OptimizedReposGraphQLResponse = {
+			user: {
+				repositories: {
+					nodes: Array<{
+						name: string;
+						owner: {
+							login: string;
+						};
+						isFork: boolean;
+						isArchived: boolean;
+						pushedAt: string;
+						parent?: {
+							name: string;
+							owner: {
+								login: string;
+							};
+						};
+					}>;
+					pageInfo: {
+						hasNextPage: boolean;
+						endCursor: string | null;
+					};
+				};
+			};
+			rateLimit: {
+				limit: number;
+				remaining: number;
+				used: number;
+				resetAt: string;
+			};
+		};
+
+		// Fetch user's repositories using GraphQL with pagination
+		// OPTIMIZATION: Limit to 50 most recent repos to reduce API calls
 		let allRepos: Array<{
 			name: string;
 			owner: {
 				login: string;
 			};
 			isFork: boolean;
+			isArchived: boolean;
+			pushedAt: string;
 			parent?: {
 				name: string;
 				owner: {
@@ -85,21 +121,24 @@ export async function GET(request: NextRequest) {
 		let hasNextPage = true;
 		let cursor: string | null = null;
 		const perPage = 100;
-		let lastResponse: ReposGraphQLResponse | null = null;
+		const MAX_REPOS_TO_FETCH = 50; // OPTIMIZATION: Limit repos to reduce API calls
+		let lastResponse: OptimizedReposGraphQLResponse | null = null;
 
-		while (hasNextPage) {
-			const response: ReposGraphQLResponse =
-				await octokit.graphql<ReposGraphQLResponse>(
+		while (hasNextPage && allRepos.length < MAX_REPOS_TO_FETCH) {
+			const response: OptimizedReposGraphQLResponse =
+				await octokit.graphql<OptimizedReposGraphQLResponse>(
 					`
 				query($username: String!, $first: Int!, $after: String) {
 					user(login: $username) {
-						repositories(first: $first, after: $after, ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]) {
+						repositories(first: $first, after: $after, ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER], orderBy: {field: PUSHED_AT, direction: DESC}) {
 							nodes {
 								name
 								owner {
 									login
 								}
 								isFork
+								isArchived
+								pushedAt
 								parent {
 									name
 									owner {
@@ -123,7 +162,7 @@ export async function GET(request: NextRequest) {
 			`,
 					{
 						username: username,
-						first: perPage,
+						first: Math.min(perPage, MAX_REPOS_TO_FETCH),
 						after: cursor,
 					},
 				);
@@ -133,21 +172,37 @@ export async function GET(request: NextRequest) {
 			cursor = response.user.repositories.pageInfo.endCursor;
 			lastResponse = response;
 
-			// Safety check to prevent infinite loops
-			if (allRepos.length > 1000) {
+			// OPTIMIZATION: Stop if we have enough repos
+			if (allRepos.length >= MAX_REPOS_TO_FETCH) {
 				break;
 			}
 		}
+
+		// OPTIMIZATION: Filter out archived repos and very old repos (1+ year inactive)
+		const oneYearAgo = new Date();
+		oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+		allRepos = allRepos.filter(repo => {
+			if (repo.isArchived) return false;
+			const pushedAt = new Date(repo.pushedAt);
+			return pushedAt > oneYearAgo;
+		});
 
 		// Get accurate commit counts using Link header pagination trick
 		// Query with per_page=1 and extract the last page number from Link header
 		// This gives us the exact TOTAL commit count (all contributors) with minimal data transfer
 		// Reference: https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
 
-		const BATCH_SIZE = 15; // Process 15 repos at a time
+		// OPTIMIZATION: Increased batch size for better parallelism
+		const BATCH_SIZE = 30; // Process 30 repos at a time (increased from 15)
+		const TARGET_REPOS = 10; // Stop early once we have enough qualifying repos
 		const repoActivities: TopContributingRepo[] = [];
 
 		for (let i = 0; i < allRepos.length; i += BATCH_SIZE) {
+			// OPTIMIZATION: Early exit if we already have enough qualifying repos
+			if (repoActivities.filter(r => r.userCommits && r.userCommits > 0).length >= TARGET_REPOS) {
+				break;
+			}
 			const batch = allRepos.slice(i, i + BATCH_SIZE);
 			const batchResults = await Promise.all(
 				batch.map(async (repo) => {
@@ -328,10 +383,11 @@ export async function GET(request: NextRequest) {
 			rateLimit,
 		};
 
-		// Store in cache with 2-hour expiration
+		// OPTIMIZATION: Store in cache with 6-hour expiration (increased from 2 hours)
+		// Longer cache reduces API calls for frequently accessed profiles
 		cache.set(cacheKey, {
 			data: dataToCache,
-			expiration: Date.now() + 7200000, // 2 hours
+			expiration: Date.now() + 21600000, // 6 hours (21600000ms)
 		});
 
 		return NextResponse.json(dataToCache);
