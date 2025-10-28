@@ -13,15 +13,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { UserData } from '@/types/user';
 
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 const gabarito = Gabarito({ weight: ['400'], subsets: ['latin'] });
-
-interface UserData {
-	avatar_url: string;
-	name: string;
-	login: string;
-}
 
 // Avatar image
 function Avatar({ src }: { src: string }) {

@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { TotalContributed } from '../charts/TotalContributed';
 import { BsInfoCircleFill } from 'react-icons/bs';
-import { Language, Repo, TopContributingRepo } from '@/types/repo';
+import { Repo, TopContributingRepo } from '@/types/repo';
+import { UserStats } from '@/types/user';
 import { StatisticsTabSkeleton } from '../skeletons/StatisticsTabSkeletons';
 import { getTopContributingRepos } from '@/lib/getTopContributingRepos';
 import { TopContributingReposChart } from '../charts/TopContributingReposChart';
@@ -14,7 +15,7 @@ import { escapeHtml } from '@/utils/nameUtils';
 
 interface StatisticsTabContentProps {
 	repos: Repo[];
-	languages: Language[];
+	languages: UserStats | null;
 	topContributingRepos: TopContributingRepo[];
 	userName: string;
 	name: string | null;
@@ -45,7 +46,9 @@ function StatisticsTabContent({
 		? `${escapeHtml(nameToUse)}'`
 		: `${escapeHtml(nameToUse)}'s`;
 
-	if (repos.length === 0 || languages.length === 0) {
+	const hasLanguageData = languages && languages[userName] && Object.keys(languages[userName]).length > 0;
+
+	if (repos.length === 0 || !hasLanguageData) {
 		return <StatisticsTabSkeleton />;
 	}
 

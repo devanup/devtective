@@ -6,7 +6,10 @@ import { Card, CardContent } from '@/components/ui/card';
 
 interface RepoActivity {
 	repo: string;
+	owner: string;
 	totalCommits: number;
+	userCommits?: number;
+	isOwnedByUser?: boolean;
 }
 
 interface TopContributingReposResult {

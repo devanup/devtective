@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/core';
 import { Repo, RateLimit } from '@/types/repo';
+import { env } from '@/config/env';
 
 const octokit = new Octokit({
-	auth: process.env.GITHUB_TOKEN,
+	auth: env.GITHUB_TOKEN,
 });
 
 // In-memory cache

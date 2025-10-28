@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/core';
 import { TopContributingRepo, RateLimit, Repo } from '@/types/repo';
+import { env } from '@/config/env';
 
 const octokit = new Octokit({
-	auth: process.env.GITHUB_TOKEN,
+	auth: env.GITHUB_TOKEN,
 });
 
 // In-memory cache
@@ -35,49 +36,75 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
+		// Define GraphQL response type
+		type ReposGraphQLResponse = {
+			user: {
+				repositories: {
+					nodes: Array<{
+						name: string;
+						owner: {
+							login: string;
+						};
+						isFork: boolean;
+						parent?: {
+							name: string;
+							owner: {
+								login: string;
+							};
+						};
+					}>;
+					pageInfo: {
+						hasNextPage: boolean;
+						endCursor: string | null;
+					};
+				};
+			};
+			rateLimit: {
+				limit: number;
+				remaining: number;
+				used: number;
+				resetAt: string;
+			};
+		};
+
 		// Fetch ALL user's repositories using GraphQL with pagination
 		let allRepos: Array<{
 			name: string;
 			owner: {
 				login: string;
 			};
+			isFork: boolean;
+			parent?: {
+				name: string;
+				owner: {
+					login: string;
+				};
+			};
 		}> = [];
 
 		let hasNextPage = true;
 		let cursor: string | null = null;
 		const perPage = 100;
+		let lastResponse: ReposGraphQLResponse | null = null;
 
 		while (hasNextPage) {
-			const response = await octokit.graphql<{
-				user: {
-					repositories: {
-						nodes: Array<{
-							name: string;
-							owner: {
-								login: string;
-							};
-						}>;
-						pageInfo: {
-							hasNextPage: boolean;
-							endCursor: string | null;
-						};
-					};
-				};
-				rateLimit: {
-					limit: number;
-					remaining: number;
-					used: number;
-					resetAt: string;
-				};
-			}>(
-				`
+			const response: ReposGraphQLResponse =
+				await octokit.graphql<ReposGraphQLResponse>(
+					`
 				query($username: String!, $first: Int!, $after: String) {
 					user(login: $username) {
-						repositories(first: $first, after: $after, ownerAffiliations: OWNER) {
+						repositories(first: $first, after: $after, ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER]) {
 							nodes {
 								name
 								owner {
 									login
+								}
+								isFork
+								parent {
+									name
+									owner {
+										login
+									}
 								}
 							}
 							pageInfo {
@@ -94,16 +121,17 @@ export async function GET(request: NextRequest) {
 					}
 				}
 			`,
-				{
-					username: username,
-					first: perPage,
-					after: cursor,
-				},
-			);
+					{
+						username: username,
+						first: perPage,
+						after: cursor,
+					},
+				);
 
 			allRepos = allRepos.concat(response.user.repositories.nodes);
 			hasNextPage = response.user.repositories.pageInfo.hasNextPage;
 			cursor = response.user.repositories.pageInfo.endCursor;
+			lastResponse = response;
 
 			// Safety check to prevent infinite loops
 			if (allRepos.length > 1000) {
@@ -111,114 +139,189 @@ export async function GET(request: NextRequest) {
 			}
 		}
 
-		console.log(`Found ${allRepos.length} repositories for ${username}`);
+		// Get accurate commit counts using Link header pagination trick
+		// Query with per_page=1 and extract the last page number from Link header
+		// This gives us the exact TOTAL commit count (all contributors) with minimal data transfer
+		// Reference: https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
 
-		// Get accurate commit counts for each repo using REST API with pagination
-		// Process ALL repositories, not just the first 20
-		const repoActivities = await Promise.all(
-			allRepos.map(async (repo) => {
-				try {
-					let totalCommits = 0;
-					let page = 1;
-					const perPage = 100;
-					let hasMorePages = true;
+		const BATCH_SIZE = 15; // Process 15 repos at a time
+		const repoActivities: TopContributingRepo[] = [];
 
-					while (hasMorePages) {
-						const { data } = await octokit.request(
+		for (let i = 0; i < allRepos.length; i += BATCH_SIZE) {
+			const batch = allRepos.slice(i, i + BATCH_SIZE);
+			const batchResults = await Promise.all(
+				batch.map(async (repo) => {
+					// If it's a fork, treat it as not owned by user and count commits in the fork
+					// Otherwise, check if the owner matches the username
+					const isFork = repo.isFork && repo.parent;
+					const isOwnedByUser =
+						!isFork &&
+						repo.owner.login.toLowerCase() === username.toLowerCase();
+
+					try {
+						// For forks, we want to count commits in the original repo (parent)
+						// For owned repos, count in the user's repo
+						const targetOwner =
+							isFork && repo.parent
+								? repo.parent.owner.login
+								: repo.owner.login;
+						const targetRepo =
+							isFork && repo.parent ? repo.parent.name : repo.name;
+
+						// Query commits with per_page=1 to minimize data transfer
+						// The Link header will tell us the total page count = total commits
+						// No author filter - we want ALL commits in the repo
+						const response = await octokit.request(
 							'GET /repos/{owner}/{repo}/commits',
 							{
-								owner: repo.owner.login,
-								repo: repo.name,
-								author: username,
-								per_page: perPage,
-								page: page,
-								sha: 'HEAD', // Include all branches
+								owner: targetOwner,
+								repo: targetRepo,
+								// No author filter - count all commits
+								per_page: 1, // Only fetch 1 commit to get pagination info
+								headers: {
+									'X-GitHub-Api-Version': '2022-11-28',
+								},
 							},
 						);
 
-						totalCommits += data.length;
+						// Parse the Link header to get the last page number
+						const linkHeader = response.headers.link;
+						let totalCommits = 0;
 
-						// If we got less than perPage results, we've reached the end
-						if (data.length < perPage) {
-							hasMorePages = false;
+						if (!linkHeader) {
+							// No Link header means there's only 0 or 1 commit
+							totalCommits = response.data.length;
 						} else {
-							page++;
+							// Extract last page number from Link header
+							// Link header format: <url>; rel="next", <url>; rel="last"
+							const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
+
+							if (lastPageMatch) {
+								totalCommits = parseInt(lastPageMatch[1], 10);
+							} else {
+								// If no "last" link, check if there's a "next" link
+								const nextPageMatch = linkHeader.match(
+									/page=(\d+)>; rel="next"/,
+								);
+								if (nextPageMatch) {
+									// If there's a next but no last, we're on first page with more pages
+									totalCommits = parseInt(nextPageMatch[1], 10);
+								} else {
+									// Fallback to data length if we can't parse the header
+									totalCommits = response.data.length;
+								}
+							}
 						}
 
-						// Safety check to prevent infinite loops
-						if (page > 50) {
-							// Max 5000 commits per repo
-							break;
+						// Always fetch the user's individual commit count, even for owned repos
+						let userCommits: number | undefined = undefined;
+
+						if (totalCommits > 0) {
+							try {
+								// Count user's commits using the author parameter with Link header pagination
+								// Note: Matches git author name/email which usually corresponds to GitHub username
+								const userResponse = await octokit.request(
+									'GET /repos/{owner}/{repo}/commits',
+									{
+										owner: targetOwner,
+										repo: targetRepo,
+										author: username,
+										per_page: 1,
+										headers: {
+											'X-GitHub-Api-Version': '2022-11-28',
+										},
+									},
+								);
+
+								const userLinkHeader = userResponse.headers.link;
+
+								if (!userLinkHeader) {
+									userCommits = userResponse.data.length;
+								} else {
+									const userLastPageMatch = userLinkHeader.match(
+										/page=(\d+)>; rel="last"/,
+									);
+									if (userLastPageMatch) {
+										userCommits = parseInt(userLastPageMatch[1], 10);
+									} else {
+										const userNextPageMatch = userLinkHeader.match(
+											/page=(\d+)>; rel="next"/,
+										);
+										userCommits = userNextPageMatch
+											? parseInt(userNextPageMatch[1], 10)
+											: userResponse.data.length;
+									}
+								}
+							} catch {
+								// If we can't fetch user commits, set to undefined
+								userCommits = undefined;
+							}
 						}
+
+						// Use the target owner/repo name for display
+						const displayOwner =
+							isFork && repo.parent
+								? repo.parent.owner.login
+								: repo.owner.login;
+						const displayRepo =
+							isFork && repo.parent ? repo.parent.name : repo.name;
+
+						return {
+							repo: displayRepo,
+							owner: displayOwner,
+							totalCommits,
+							userCommits,
+							isOwnedByUser,
+						};
+					} catch (error) {
+						// If repo is empty, private, or inaccessible, return 0
+						const displayOwner =
+							isFork && repo.parent
+								? repo.parent.owner.login
+								: repo.owner.login;
+						const displayRepo =
+							isFork && repo.parent ? repo.parent.name : repo.name;
+
+						return {
+							repo: displayRepo,
+							owner: displayOwner,
+							totalCommits: 0,
+							isOwnedByUser: false,
+						};
 					}
+				}),
+			);
 
-					// Also count commits where user is the committer (not author)
-					// This catches merges, rebases, etc.
-					let committerCommits = 0;
-					page = 1;
-					hasMorePages = true;
+			repoActivities.push(...batchResults);
+		}
 
-					while (hasMorePages) {
-						const { data } = await octokit.request(
-							'GET /repos/{owner}/{repo}/commits',
-							{
-								owner: repo.owner.login,
-								repo: repo.name,
-								committer: username,
-								per_page: perPage,
-								page: page,
-								sha: 'HEAD', // Include all branches
-							},
-						);
-
-						// Filter out commits where user is both author and committer to avoid double counting
-						const uniqueCommitterCommits = data.filter(
-							(commit) => commit.author?.login !== username,
-						);
-
-						committerCommits += uniqueCommitterCommits.length;
-
-						// If we got less than perPage results, we've reached the end
-						if (data.length < perPage) {
-							hasMorePages = false;
-						} else {
-							page++;
-						}
-
-						// Safety check to prevent infinite loops
-						if (page > 50) {
-							// Max 5000 commits per repo
-							break;
-						}
-					}
-
-					return {
-						repo: repo.name,
-						totalCommits: totalCommits + committerCommits,
-					};
-				} catch (error) {
-					console.error(`Error fetching commits for ${repo.name}:`, error);
-					return {
-						repo: repo.name,
-						totalCommits: 0,
-					};
-				}
-			}),
-		);
-
-		// Sort by commit count and filter out repos with 0 commits
+		// Sort by commit count and filter out repos with 0 commits or where user has no commits
 		const sortedActivities = repoActivities
-			.filter((activity) => activity.totalCommits > 0)
+			.filter((activity) => {
+				// Must have total commits
+				if (activity.totalCommits === 0) return false;
+				// Must have user commits - exclude repos where user has 0 commits
+				if (activity.userCommits === undefined || activity.userCommits === 0)
+					return false;
+				return true;
+			})
 			.sort((a, b) => b.totalCommits - a.totalCommits)
 			.slice(0, 5); // Return top 5 as requested
 
-		// Get rate limit from the last response
-		const rateLimit: RateLimit = {
-			limit: 5000, // Default fallback
-			remaining: 4000, // Default fallback
-			used: 1000, // Default fallback
-			reset: Date.now() / 1000 + 3600, // 1 hour from now
-		};
+		// Get rate limit from the last GraphQL response
+		const rateLimit: RateLimit = lastResponse
+			? {
+					limit: lastResponse.rateLimit.limit,
+					remaining: lastResponse.rateLimit.remaining,
+					used: lastResponse.rateLimit.used,
+					reset: new Date(lastResponse.rateLimit.resetAt).getTime() / 1000,
+			  }
+			: {
+					limit: 5000,
+					remaining: 5000,
+					used: 0,
+					reset: Date.now() / 1000 + 3600,
+			  };
 
 		const dataToCache = {
 			repoActivities: sortedActivities,
@@ -233,7 +336,6 @@ export async function GET(request: NextRequest) {
 
 		return NextResponse.json(dataToCache);
 	} catch (error) {
-		console.error('Top contributing repos API error:', error);
 		return NextResponse.json(
 			{
 				error: 'An error occurred while fetching top contributing repos',

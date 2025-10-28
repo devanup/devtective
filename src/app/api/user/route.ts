@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserData, RateLimit } from '@/types/user';
+import { env } from '@/config/env';
 
 export async function GET(request: NextRequest) {
 	const searchParams = request.nextUrl.searchParams;
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
 		const res = await fetch(`https://api.github.com/users/${username}`, {
 			method: 'GET',
 			headers: {
-				Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+				Authorization: `Bearer ${env.GITHUB_TOKEN}`,
 				Accept: 'application/vnd.github.v3+json',
 			},
 			next: {

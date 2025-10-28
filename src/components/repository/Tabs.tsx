@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatisticsTab } from './StatisticsTab';
 import { RepositoriesTab } from './RepositoriesTab';
-import { Language, Repo, TopContributingRepo } from '@/types/repo';
+import { Repo, TopContributingRepo } from '@/types/repo';
+import { UserStats } from '@/types/user';
 import Footer from '../Footer';
 import {
 	Select,
@@ -14,7 +15,7 @@ import {
 
 interface RepoOverviewTabProps {
 	repos: Repo[];
-	languages: Language[];
+	languages: UserStats | null;
 	topContributingRepos: TopContributingRepo[];
 	name: string | null;
 	userName: string;
