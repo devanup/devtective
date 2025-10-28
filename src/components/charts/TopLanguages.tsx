@@ -11,26 +11,13 @@ interface LanguageData {
 	color: string;
 }
 
-// Utility function to convert hex color to rgba with opacity
-const convertHexToRGBA = (hex: string, opacity: number): string => {
-	const cleanHex = hex.replace('#', '');
-	const r = parseInt(cleanHex.substring(0, 2), 16);
-	const g = parseInt(cleanHex.substring(2, 4), 16);
-	const b = parseInt(cleanHex.substring(4, 6), 16);
-	return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
-
 export function TopLanguages({ data }: { data: LanguageData[] }) {
 	const { theme, systemTheme } = useTheme();
 	const [textColor, setTextColor] = useState('rgba(0, 0, 0, 0.8)');
 
 	useEffect(() => {
 		const currentTheme = theme === 'system' ? systemTheme : theme;
-		setTextColor(
-			currentTheme === 'dark'
-				? 'rgba(255, 255, 255, 0.8)'
-				: 'rgba(0, 0, 0, 0.8)',
-		);
+		setTextColor(currentTheme === 'dark' ? 'white' : 'rgba(0, 0, 0, 0.8)');
 	}, [theme, systemTheme]);
 
 	const chartOptions: ChartOptions<'pie'> = {
@@ -42,6 +29,43 @@ export function TopLanguages({ data }: { data: LanguageData[] }) {
 				labels: {
 					boxHeight: 10,
 					color: textColor,
+					generateLabels: (chart) => {
+						const datasets = chart.data.datasets;
+						return (
+							chart.data.labels?.map((label, i) => {
+								const value = datasets[0].data[i];
+								const bgColors = datasets[0].backgroundColor;
+								const borderColors = datasets[0].borderColor;
+
+								// Safely extract colors from arrays
+								const fillStyle = Array.isArray(bgColors)
+									? (bgColors[i] as string)
+									: (bgColors as string);
+								const strokeStyle = Array.isArray(borderColors)
+									? (borderColors[i] as string)
+									: (borderColors as string);
+
+								return {
+									text: `${label}: ${value}%`,
+									fillStyle,
+									strokeStyle,
+									lineWidth: datasets[0].borderWidth as number,
+									hidden: false,
+									index: i,
+									fontColor: textColor,
+								};
+							}) || []
+						);
+					},
+				},
+			},
+			tooltip: {
+				callbacks: {
+					label: (context) => {
+						const label = context.label || '';
+						const value = context.parsed;
+						return `${label}: ${value}%`;
+					},
 				},
 			},
 		},
@@ -56,12 +80,13 @@ export function TopLanguages({ data }: { data: LanguageData[] }) {
 		datasets: [
 			{
 				data: data.map((lang) => lang.value),
+				// Colors are already provided as RGBA from the formatter
 				backgroundColor: data.map((lang) =>
-					lang.label === 'Others'
-						? convertHexToRGBA('#808080', 0.6) // Light gray for "Others"
-						: convertHexToRGBA(lang.color, 0.6),
+					lang.label === 'Others' ? 'rgba(128, 128, 128, 0.6)' : lang.color,
 				),
-				borderColor: data.map((lang) => lang.color),
+				borderColor: data.map((lang) =>
+					lang.label === 'Others' ? 'rgba(128, 128, 128, 0.9)' : lang.color,
+				),
 				borderWidth: 0.5,
 			},
 		],
