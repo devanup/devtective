@@ -7,6 +7,7 @@ export interface UserData {
 	following: number;
 	public_repos: number;
 	created_at: string;
+	updated_at: string;
 	company: string | null;
 	blog: string | null;
 	location: string | null;

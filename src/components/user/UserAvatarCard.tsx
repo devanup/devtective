@@ -14,6 +14,8 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { UserData } from '@/types/user';
+import { Repo } from '@/types/repo';
+import { timeAgo, getMostRecentPushDate } from '@/lib/utils';
 
 const jetBrainsMono = JetBrains_Mono({ weight: '400', subsets: ['latin'] });
 const gabarito = Gabarito({ weight: ['400'], subsets: ['latin'] });
@@ -33,7 +35,7 @@ function Avatar({ src }: { src: string }) {
 }
 
 // Name and username
-function UserInfo({ name, login }: { name: string | null; login: string }) {
+function UserInfo({ name, login, lastActiveDate }: { name: string | null; login: string; lastActiveDate: string | null }) {
 	const displayName = name || '';
 	const isNameLong = displayName.length > 18;
 
@@ -77,27 +79,30 @@ function UserInfo({ name, login }: { name: string | null; login: string }) {
 					className={`inline-flex items-center gap-2 text-xs text-muted-foreground ${jetBrainsMono.className} opacity-70`}
 				>
 					{/* <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' /> */}
-					Last active: 2 days ago
+					Last active: {lastActiveDate ? timeAgo(lastActiveDate) : 'unknown'}
 				</span>
 			</div>
 		</div>
 	);
 }
 
-function UserAvatarContent({ userData }: { userData: UserData }) {
+function UserAvatarContent({ userData, repos }: { userData: UserData; repos: Repo[] }) {
+	// Find the most recent push date from all repos
+	const lastActiveDate = getMostRecentPushDate(repos);
+
 	return (
 		<div className='flex flex-col md:flex-row space-y-4 md:space-y-0 items-center md:space-x-6 space-x-0'>
 			<Avatar src={userData.avatar_url} />
-			<UserInfo name={userData.name} login={userData.login} />
+			<UserInfo name={userData.name} login={userData.login} lastActiveDate={lastActiveDate} />
 		</div>
 	);
 }
 
-export function UserAvatarCard({ userData }: { userData: UserData | null }) {
+export function UserAvatarCard({ userData, repos = [] }: { userData: UserData | null; repos?: Repo[] }) {
 	return (
 		<Suspense fallback={<LoadingFallback />}>
 			{userData ? (
-				<UserAvatarContent userData={userData} />
+				<UserAvatarContent userData={userData} repos={repos} />
 			) : (
 				<LoadingFallback />
 			)}

@@ -108,7 +108,7 @@ export default function Home() {
 			{isLoading && <LoadingOverlay message={loadingMessage} />}
 
 			<div className='flex lg:flex-row flex-col lg:space-x-12 space-x-0 lg:space-y-0 space-y-8 mt-12'>
-				<ProfileOverView userData={userData} />
+				<ProfileOverView userData={userData} repos={repos} />
 				<RepoOverview
 					repos={repos}
 					languages={languages}
