@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
 		let hasNextPage = true;
 		let cursor: string | null = null;
 		const perPage = 100;
-		const MAX_REPOS_TO_FETCH = 50; // OPTIMIZATION: Limit repos to reduce API calls
+		const MAX_REPOS_TO_FETCH = 200; // Increased to capture more repos for accurate top contributing analysis
 		let lastResponse: OptimizedReposGraphQLResponse | null = null;
 
 		while (hasNextPage && allRepos.length < MAX_REPOS_TO_FETCH) {
@@ -178,14 +178,10 @@ export async function GET(request: NextRequest) {
 			}
 		}
 
-		// OPTIMIZATION: Filter out archived repos and very old repos (1+ year inactive)
-		const oneYearAgo = new Date();
-		oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
+		// Filter out archived repos only (removed 1-year filter to capture all contributions)
 		allRepos = allRepos.filter(repo => {
 			if (repo.isArchived) return false;
-			const pushedAt = new Date(repo.pushedAt);
-			return pushedAt > oneYearAgo;
+			return true;
 		});
 
 		// Get accurate commit counts using Link header pagination trick
@@ -197,6 +193,7 @@ export async function GET(request: NextRequest) {
 		const BATCH_SIZE = 30; // Process 30 repos at a time (increased from 15)
 		const TARGET_REPOS = 10; // Stop early once we have enough qualifying repos
 		const repoActivities: TopContributingRepo[] = [];
+		const seenRepos = new Set<string>(); // Track unique repos to prevent duplicates
 
 		for (let i = 0; i < allRepos.length; i += BATCH_SIZE) {
 			// OPTIMIZATION: Early exit if we already have enough qualifying repos
@@ -222,6 +219,14 @@ export async function GET(request: NextRequest) {
 								: repo.owner.login;
 						const targetRepo =
 							isFork && repo.parent ? repo.parent.name : repo.name;
+
+						// Check for duplicates using owner/repo as unique key
+						const repoKey = `${targetOwner}/${targetRepo}`.toLowerCase();
+						if (seenRepos.has(repoKey)) {
+							// Skip duplicate repos
+							return null;
+						}
+						seenRepos.add(repoKey);
 
 						// Query commits with per_page=1 to minimize data transfer
 						// The Link header will tell us the total page count = total commits
@@ -347,10 +352,11 @@ export async function GET(request: NextRequest) {
 				}),
 			);
 
-			repoActivities.push(...batchResults);
+			// Filter out null values (duplicates) before adding to results
+			repoActivities.push(...batchResults.filter(result => result !== null));
 		}
 
-		// Sort by commit count and filter out repos with 0 commits or where user has no commits
+		// Filter repos where user has commits, then sort by total commits (highest to lowest)
 		const sortedActivities = repoActivities
 			.filter((activity) => {
 				// Must have total commits
@@ -360,7 +366,7 @@ export async function GET(request: NextRequest) {
 					return false;
 				return true;
 			})
-			.sort((a, b) => b.totalCommits - a.totalCommits)
+			.sort((a, b) => b.totalCommits - a.totalCommits) // Sort by total commits (highest to lowest)
 			.slice(0, 5); // Return top 5 as requested
 
 		// Get rate limit from the last GraphQL response
