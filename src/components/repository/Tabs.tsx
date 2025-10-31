@@ -30,6 +30,7 @@ export function RepoOverviewTab({
 }: RepoOverviewTabProps) {
 	const [filterValue, setFilterValue] = useState('last_pushed');
 	const [filteredRepos, setFilteredRepos] = useState(repos);
+	const [visibleCount, setVisibleCount] = useState(10);
 
 	const filters = [
 		{
@@ -92,13 +93,15 @@ export function RepoOverviewTab({
 					}
 				});
 			setFilteredRepos(sortedRepos);
+			// Reset visible count when filter changes
+			setVisibleCount(10);
 		} else {
 			setFilteredRepos([]);
 		}
 	}, [repos, filterValue]);
 
 	const repoCount = filteredRepos.length;
-	const displayCount = Math.min(repoCount, 10);
+	const displayCount = Math.min(repoCount, visibleCount);
 
 	return (
 		<>
@@ -123,34 +126,42 @@ export function RepoOverviewTab({
 				{/* Repositories tab */}
 				<TabsContent value='repositories'>
 					{/* Number of repos */}
-					<div className='relative text-muted-foreground flex md:flex-row flex-col items-center justify-start ml-4 md:ml-0 md:justify-center text-sm -mt-5 mb-0 bg-transparent pt-8 pb-6'>
+					<div className='relative text-muted-foreground flex md:flex-row flex-col items-center justify-center gap-4 px-4 md:px-10 text-sm -mt-5 mb-0 bg-transparent pt-8 pb-6'>
 						{repoCount > 0 ? (
-							<h1>
-								Showing {displayCount}{' '}
-								{displayCount === 1 ? 'repository' : 'repositories'}
-							</h1>
+							<>
+								<h1 className='flex-shrink-0'>
+									Showing {displayCount}{' '}
+									{displayCount === 1 ? 'repository' : 'repositories'}
+								</h1>
+								<div className='md:absolute right-4 md:right-10 flex-shrink-0'>
+									<Select onValueChange={(value) => setFilterValue(value)}>
+										<SelectTrigger className='w-[180px]'>
+											<SelectValue placeholder='Last Pushed' />
+										</SelectTrigger>
+										<SelectContent>
+											{filters.map((filter) => (
+												<SelectItem key={filter.value} value={filter.value}>
+													{filter.label}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+							</>
 						) : (
 							<div className='flex items-center justify-center my-10'>
 								<h1>No repositories match the selected filter</h1>
 							</div>
 						)}
-						<div className='md:absolute right-4 md:right-10 mt-5 md:mt-0'>
-							<Select onValueChange={(value) => setFilterValue(value)}>
-								<SelectTrigger className='w-[180px]'>
-									<SelectValue placeholder='Last Pushed' />
-								</SelectTrigger>
-								<SelectContent>
-									{filters.map((filter) => (
-										<SelectItem key={filter.value} value={filter.value}>
-											{filter.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
 					</div>
 
-					{repoCount > 0 && <RepositoriesTab repos={filteredRepos} />}
+					{repoCount > 0 && (
+						<RepositoriesTab
+							repos={filteredRepos}
+							visibleCount={visibleCount}
+							setVisibleCount={setVisibleCount}
+						/>
+					)}
 				</TabsContent>
 			</Tabs>
 			<Footer />
