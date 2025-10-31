@@ -14,6 +14,7 @@ interface TopContributingReposProps {
 		isOwnedByUser?: boolean;
 	}[];
 	userName: string;
+	name: string | null;
 }
 
 const CHART_COLORS = {
@@ -38,6 +39,7 @@ const CHART_COLORS = {
 export function TopContributingRepos({
 	data,
 	userName,
+	name,
 }: TopContributingReposProps) {
 	const { theme, systemTheme } = useTheme();
 	const [gridColor, setGridColor] = useState('rgba(0, 0, 0, 0.1)');
@@ -83,9 +85,11 @@ export function TopContributingRepos({
 
 						// Always show user's individual commit count if available
 						if (repo.userCommits !== undefined) {
-							// Capitalize first letter of username for display
-							const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
-							lines.push(`${displayName}'s Commits: ${repo.userCommits.toLocaleString()}`);
+							// Use the name if available, otherwise use username
+							const displayName = name ?? userName;
+							lines.push(
+								`${displayName}'s Commits: ${repo.userCommits.toLocaleString()}`,
+							);
 						}
 
 						return lines;

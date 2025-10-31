@@ -10,7 +10,7 @@ export default function Footer() {
 			className={`${gabarito.className} mt-8 text-center text-muted-foreground dark:text-gray-400`}
 		>
 			<Link
-				href='https://github.com/devanup/devtective'
+				href='https://anup.dev/projects/1'
 				target='_blank'
 				className='text-blue-400 dark:text-blue-300 hover:underline'
 			>
@@ -18,13 +18,13 @@ export default function Footer() {
 			</Link>{' '}
 			by{' '}
 			<Link
-				href='https://github.com/devanup'
+				href='https://anup.dev'
 				target='_blank'
 				className='text-blue-400 dark:text-blue-300 hover:underline'
 			>
 				Anup
 			</Link>{' '}
-			&copy; {new Date().getFullYear()}
+			{/* &copy; {new Date().getFullYear()} */}
 		</footer>
 	);
 }

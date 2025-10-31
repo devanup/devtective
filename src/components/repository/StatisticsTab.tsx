@@ -46,7 +46,10 @@ function StatisticsTabContent({
 		? `${escapeHtml(nameToUse)}'`
 		: `${escapeHtml(nameToUse)}'s`;
 
-	const hasLanguageData = languages && languages[userName] && Object.keys(languages[userName]).length > 0;
+	const hasLanguageData =
+		languages &&
+		languages[userName] &&
+		Object.keys(languages[userName]).length > 0;
 
 	if (repos.length === 0 || !hasLanguageData) {
 		return <StatisticsTabSkeleton />;
@@ -123,7 +126,7 @@ function StatisticsTabContent({
 				{/* Top Contributing Repos */}
 				<Card className='w-[100%] xl:w-[60%] flex flex-col justify-evenly rounded-xl'>
 					<CardContent className='h-[300px] p-6 rounded-xl'>
-						<TopContributingReposChart userName={userName} />
+						<TopContributingReposChart userName={userName} name={name} />
 					</CardContent>
 					<CardFooter className='flex flex-col items-start px-6'>
 						<div className='flex space-x-2 items-center'>

@@ -16,7 +16,13 @@ interface TopContributingReposResult {
 	repoActivities: RepoActivity[];
 }
 
-export function TopContributingReposChart({ userName }: { userName: string }) {
+export function TopContributingReposChart({
+	userName,
+	name,
+}: {
+	userName: string;
+	name: string | null;
+}) {
 	const [data, setData] = useState<TopContributingReposResult | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -48,7 +54,11 @@ export function TopContributingReposChart({ userName }: { userName: string }) {
 		);
 
 	return (
-		<TopContributingRepos data={data.repoActivities} userName={userName} />
+		<TopContributingRepos
+			data={data.repoActivities}
+			userName={userName}
+			name={name}
+		/>
 	);
 }
 
