@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 			`
       query($username: String!, $first: Int!) {
         user(login: $username) {
-          repositories(first: $first, ownerAffiliations: OWNER) {
+          repositories(first: $first, ownerAffiliations: OWNER, privacy: PUBLIC) {
             nodes {
               name
               owner {
