@@ -71,18 +71,18 @@ function UserInfo({ name, login }: { name: string | null; login: string }) {
 					<span>@{login}</span>
 				</div>
 			</LinkPreview>
+			{/* Last active */}
+			<div className='mt-2 flex items-center justify-center md:justify-start'>
+				<span
+					className={`inline-flex items-center gap-2 text-xs text-muted-foreground ${jetBrainsMono.className} opacity-70`}
+				>
+					{/* <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' /> */}
+					Last active: 2 days ago
+				</span>
+			</div>
 		</div>
 	);
 }
-
-// function LoadingFallback() {
-// 	return (
-// 		<div className='flex items-center space-x-6'>
-// 			<AvatarSkeleton />
-// 			<UserInfoSkeleton />
-// 		</div>
-// 	);
-// }
 
 function UserAvatarContent({ userData }: { userData: UserData }) {
 	return (
